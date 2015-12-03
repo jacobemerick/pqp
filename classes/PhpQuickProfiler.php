@@ -15,6 +15,8 @@
 
 - - - - - - - - - - - - - - - - - - - - - */
 
+namespace ParticleTree\Pqp;
+
 class PhpQuickProfiler {
 	
 	public $output = array();
@@ -23,7 +25,6 @@ class PhpQuickProfiler {
 	public function __construct($startTime, $config = '/pqp/') {
 		$this->startTime = $startTime;
 		$this->config = $config;
-		require_once($_SERVER['DOCUMENT_ROOT'].$config.'classes/Console.php');
 	}
 	
 	/*-------------------------------------------

@@ -13,6 +13,8 @@
 
 - - - - - - - - - - - - - - - - - - - - - */
 
+namespace ParticleTree\Pqp;
+
 class MySqlDatabase {
 
 	private $host;			

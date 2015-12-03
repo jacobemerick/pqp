@@ -15,7 +15,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-require_once('classes/PhpQuickProfiler.php');
+//require_once('classes/PhpQuickProfiler.php');
 //require_once('classes/MySqlDatabase.php');
 
 class PQPExample {
@@ -24,7 +24,7 @@ class PQPExample {
 	private $db = '';
 	
 	public function __construct() {
-		$this->profiler = new PhpQuickProfiler(PhpQuickProfiler::getMicroTime());
+		$this->profiler = new ParticleTree\Pqp\PhpQuickProfiler(PhpQuickProfiler::getMicroTime());
 	}
 	
 	public function init() {
@@ -59,7 +59,7 @@ class PQPExample {
 	--------------------------------------*/
 	
 	public function sampleDatabaseData() {
-		/*$this->db = new MySqlDatabase(
+		/*$this->db = new ParticleTree\Pqp\MySqlDatabase(
 			'your DB host', 
 			'your DB user',
 			'your DB password');
