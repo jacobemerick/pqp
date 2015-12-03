@@ -1,0 +1,7 @@
+{
+  "name": "particletree/pqp",
+  "description": "",
+  "require": {
+    "php": ">=5.3.0"
+  }
+}
