@@ -1,1 +1,5 @@
+/build/
+/vendor/
+codeclimate.json
+composer.phar
 .DS_Store
