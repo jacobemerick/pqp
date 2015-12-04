@@ -9,6 +9,7 @@
  *****************************************/
 
 namespace Particletree\Pqp;
+
 use Exception;
 
 class Console
@@ -46,17 +47,15 @@ class Console
      */
     public function logMemory($object = null, $name = '')
     {
+        $memory = memory_get_usage();
         if (!is_null($object)) {
             $memory = strlen(serialize($object));
-        } else {
-            $memory = memory_get_usage();
-            $name = 'PHP';
         }
 
         array_push($this->memory, array(
-            'data' => $memory,
-            'name' => $name,
-            'type' => gettype($object)
+            'usage' => $memory,
+            'name'  => $name,
+            'type'  => gettype($object)
         ));
     }
 
@@ -73,9 +72,8 @@ class Console
         }
 
         array_push($this->error, array(
-            'data' => $message,
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
+            'exception' => $exception,
+            'message'   => $message
         ));
     }
 
@@ -87,7 +85,7 @@ class Console
     public function logSpeed($name = 'Point in Time')
     {
         array_push($this->speed, array(
-            'data' => microtime(true),
+            'time' => microtime(true),
             'name' => $name,
         ));
     }
