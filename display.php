@@ -17,7 +17,7 @@
 
 function displayPqp($output, $config) {
 	
-$cssUrl = $config.'css/pQp.css';
+$css = file_get_contents(__DIR__ . '/css/pQp.css');
 		
 echo <<<JAVASCRIPT
 <!-- JavaScript -->
@@ -25,8 +25,6 @@ echo <<<JAVASCRIPT
 	var PQP_DETAILS = true;
 	var PQP_HEIGHT = "short";
 	
-	addEvent(window, 'load', loadCSS);
-
 	function changeTab(tab) {
 		var pQp = document.getElementById('pQp');
 		hideAllTabs();
@@ -67,15 +65,7 @@ echo <<<JAVASCRIPT
 		}
 	}
 	
-	function loadCSS() {
-		var sheet = document.createElement("link");
-		sheet.setAttribute("rel", "stylesheet");
-		sheet.setAttribute("type", "text/css");
-		sheet.setAttribute("href", "$cssUrl");
-		document.getElementsByTagName("head")[0].appendChild(sheet);
-		setTimeout(function(){document.getElementById("pqp-container").style.display = "block"}, 10);
-	}
-	
+  setTimeout(function(){document.getElementById("pqp-container").style.display = "block"}, 10);
 	
 	//http://www.bigbold.com/snippets/posts/show/2630
 	function addClassName(objElement, strClass, blnMayAlreadyExist){
@@ -126,6 +116,12 @@ echo <<<JAVASCRIPT
 	}
 </script>
 JAVASCRIPT;
+
+echo <<<STYLESHEETS
+<style type="text/css">
+$css
+</style>
+STYLESHEETS;
 
 echo '<div id="pqp-container" class="pQp" style="display:none">';
 

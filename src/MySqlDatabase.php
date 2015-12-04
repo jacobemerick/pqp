@@ -13,7 +13,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - */
 
-namespace ParticleTree\Pqp;
+namespace Particletree\Pqp;
 
 class MySqlDatabase {
 

@@ -13,7 +13,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - */
 
-namespace ParticleTree\Pqp;
+namespace Particletree\Pqp;
 
 class Console {
 	
@@ -59,7 +59,7 @@ class Console {
 			"line" => $exception->getLine()
 		);
 		$GLOBALS['debugger_logs']['console'][] = $logItem;
-		$GLOBALS['debugger_logs']['errorCount'] += 1;
+		@$GLOBALS['debugger_logs']['errorCount'] += 1;
 	}
 	
 	/*------------------------------------

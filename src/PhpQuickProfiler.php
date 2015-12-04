@@ -15,7 +15,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - */
 
-namespace ParticleTree\Pqp;
+namespace Particletree\Pqp;
 
 class PhpQuickProfiler {
 	
@@ -196,7 +196,7 @@ class PhpQuickProfiler {
 		$this->gatherMemoryData();
 		$this->gatherQueryData();
 		$this->gatherSpeedData();
-		require_once($_SERVER['DOCUMENT_ROOT'].$this->config.'display.php');
+		require_once __DIR__ . '/../display.php';
 		displayPqp($this->output, $this->config);
 	}
 	
