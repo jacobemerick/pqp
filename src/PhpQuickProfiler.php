@@ -21,8 +21,11 @@ class PhpQuickProfiler {
 	
 	public $output = array();
 	public $config = '';
+
+  protected $console;
 	
-	public function __construct($startTime, $config = '/pqp/') {
+	public function __construct($console, $startTime = null, $config = '/pqp/') {
+    $this->console = $console;
 		$this->startTime = $startTime;
 		$this->config = $config;
 	}
@@ -32,21 +35,51 @@ class PhpQuickProfiler {
 	-------------------------------------------*/
 	
 	public function gatherConsoleData() {
-		$logs = Console::getLogs();
-		if($logs['console']) {
-			foreach($logs['console'] as $key => $log) {
+    $console = array(
+      'messages' => array(),
+      'totals' => array(
+        'log' => 0,
+        'memory' => 0,
+        'error' => 0,
+        'speed' => 0
+      ));
+		$logs = $this->console->getLogs();
+			foreach($logs as $log) {
 				if($log['type'] == 'log') {
-					$logs['console'][$key]['data'] = print_r($log['data'], true);
+					$message = array(
+            'data' => print_r($log['data'], true),
+            'type' => 'log'
+          );
+          $console['totals']['log']++;
 				}
 				elseif($log['type'] == 'memory') {
-					$logs['console'][$key]['data'] = $this->getReadableFileSize($log['data']);
+					$message = array(
+            'name'    => $log['name'],
+            'data_type'    => $log['data_type'],
+            'data'   => $this->getReadableFileSize($log['data']),
+            'type' => 'memory'
+          );
+          $console['totals']['memory']++;
 				}
 				elseif($log['type'] == 'speed') {
-					$logs['console'][$key]['data'] = $this->getReadableTime(($log['data'] - $this->startTime)*1000);
-				}
+          $message = array(
+            'name' => $log['name'],
+            'data'    => $this->getReadableTime(($log['data'] - $this->startTime) * 1000),
+            'type' => 'speed'
+          );
+          $console['totals']['speed']++;
+				} else {
+          $message = array(
+            'data' => $log['data'],
+            'type' => 'error',
+            'file' => $log['file'],
+            'line' => $log['line']
+          );
+          $console['totals']['error']++;
+        }
+        array_push($console['messages'], $message);
 			}
-		}
-		$this->output['logs'] = $logs;
+		$this->output['logs'] = array('console' => $console);
 	}
 	
 	/*-------------------------------------------

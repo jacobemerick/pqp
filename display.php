@@ -125,7 +125,7 @@ STYLESHEETS;
 
 echo '<div id="pqp-container" class="pQp" style="display:none">';
 
-$logCount = count($output['logs']['console']);
+$logCount = count($output['logs']['console']['messages']);
 $fileCount = count($output['files']);
 $memoryUsed = $output['memoryTotals']['used'];
 $queryCount = $output['queryTotals']['count'];
@@ -165,20 +165,21 @@ if($logCount ==  0) {
 	echo '<h3>This panel has no log items.</h3>';
 }
 else {
+  $console = $output['logs']['console'];
 	echo '<table class="side" cellspacing="0">
 		<tr>
-			<td class="alt1"><var>'.$output['logs']['logCount'].'</var><h4>Logs</h4></td>
-			<td class="alt2"><var>'.$output['logs']['errorCount'].'</var> <h4>Errors</h4></td>
+			<td class="alt1"><var>'.$console['totals']['log'].'</var><h4>Logs</h4></td>
+			<td class="alt2"><var>'.$console['totals']['error'].'</var> <h4>Errors</h4></td>
 		</tr>
 		<tr>
-			<td class="alt3"><var>'.$output['logs']['memoryCount'].'</var> <h4>Memory</h4></td>
-			<td class="alt4"><var>'.$output['logs']['speedCount'].'</var> <h4>Speed</h4></td>
+			<td class="alt3"><var>'.$console['totals']['memory'].'</var> <h4>Memory</h4></td>
+			<td class="alt4"><var>'.$console['totals']['speed'].'</var> <h4>Speed</h4></td>
 		</tr>
 		</table>
 		<table class="main" cellspacing="0">';
 		
 		$class = '';
-		foreach($output['logs']['console'] as $log) {
+		foreach($output['logs']['console']['messages'] as $log) {
 			echo '<tr class="log-'.$log['type'].'">
 				<td class="type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
@@ -186,7 +187,7 @@ else {
 				echo '<div><pre>'.$log['data'].'</pre></div>';
 			}
 			elseif($log['type'] == 'memory') {
-				echo '<div><pre>'.$log['data'].'</pre> <em>'.$log['dataType'].'</em>: '.$log['name'].' </div>';
+				echo '<div><pre>'.$log['data'].'</pre> <em>'.$log['data_type'].'</em>: '.$log['name'].' </div>';
 			}
 			elseif($log['type'] == 'speed') {
 				echo '<div><pre>'.$log['data'].'</pre> <em>'.$log['name'].'</em></div>';

@@ -16,16 +16,7 @@ class Console
 {
 
     /** @var  array */
-    protected $log = array();
-
-    /** @var  array */
-    protected $memory = array();
-
-    /** @var  array */
-    protected $error = array();
-
-    /** @var  array */
-    protected $speed = array();
+    protected $store = array();
 
     /**
      * Logs data to the console
@@ -35,7 +26,10 @@ class Console
      */
     public function log($data)
     {
-        array_push($this->logs, $data);
+        array_push($this->store, array(
+          'data' => $data,
+          'type' => 'log'
+        ));
     }
 
     /**
@@ -52,10 +46,11 @@ class Console
             $memory = strlen(serialize($object));
         }
 
-        array_push($this->memory, array(
-            'usage' => $memory,
-            'name'  => $name,
-            'type'  => gettype($object)
+        array_push($this->store, array(
+            'name'      => $name,
+            'data'      => $memory,
+            'data_type' => gettype($object),
+            'type'      => 'memory'
         ));
     }
 
@@ -71,9 +66,11 @@ class Console
             $message = $exception->getMessage();
         }
 
-        array_push($this->error, array(
-            'exception' => $exception,
-            'message'   => $message
+        array_push($this->store, array(
+            'data' => $message,
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+            'type' => 'error'
         ));
     }
 
@@ -84,9 +81,10 @@ class Console
      */
     public function logSpeed($name = 'Point in Time')
     {
-        array_push($this->speed, array(
-            'time' => microtime(true),
+        array_push($this->store, array(
+            'data' => microtime(true),
             'name' => $name,
+            'type' => 'speed'
         ));
     }
 
@@ -97,11 +95,6 @@ class Console
      */
     public function getLogs()
     {
-        return array(
-            'log'    => $this->log,
-            'memory' => $this->memory,
-            'error'  => $this->error,
-            'speed'  => $this->speed
-        );
+        return $this->store;
     }
 }
