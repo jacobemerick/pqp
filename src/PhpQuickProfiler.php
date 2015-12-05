@@ -20,14 +20,17 @@ namespace Particletree\Pqp;
 class PhpQuickProfiler {
 	
 	public $output = array();
-	public $config = '';
 
   protected $console;
 	
-	public function __construct($console, $startTime = null, $config = '/pqp/') {
+	public function __construct($console, $startTime = null) {
     $this->console = $console;
+
+    if (is_null($startTime)) {
+        $startTime = microtime(true);
+    }
+
 		$this->startTime = $startTime;
-		$this->config = $config;
 	}
 	
 	/*-------------------------------------------
@@ -170,7 +173,7 @@ class PhpQuickProfiler {
 	
 	public function gatherSpeedData() {
 		$speedTotals = array();
-		$speedTotals['total'] = $this->getReadableTime(($this->getMicroTime() - $this->startTime)*1000);
+		$speedTotals['total'] = $this->getReadableTime((microtime(true) - $this->startTime)*1000);
 		$speedTotals['allowed'] = ini_get("max_execution_time");
 		$this->output['speedTotals'] = $speedTotals;
 	}
@@ -178,12 +181,6 @@ class PhpQuickProfiler {
 	/*-------------------------------------------
 	     HELPER FUNCTIONS TO FORMAT DATA
 	-------------------------------------------*/
-	
-	function getMicroTime() {
-		$time = microtime();
-		$time = explode(' ', $time);
-		return $time[1] + $time[0];
-	}
 	
 	public function getReadableFileSize($size, $retstring = null) {
         	// adapted from code at http://aidanlister.com/repos/v/function.size_readable.php
@@ -230,7 +227,7 @@ class PhpQuickProfiler {
 		$this->gatherQueryData();
 		$this->gatherSpeedData();
 		require_once __DIR__ . '/../display.php';
-		displayPqp($this->output, $this->config);
+		displayPqp($this->output);
 	}
 	
 }

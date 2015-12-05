@@ -15,7 +15,7 @@
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-function displayPqp($output, $config) {
+function displayPqp($output) {
 	
 $css = file_get_contents(__DIR__ . '/css/pQp.css');
 		
