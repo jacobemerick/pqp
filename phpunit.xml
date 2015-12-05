@@ -9,7 +9,7 @@
   </logging>
   <filter>
     <whitelist>
-      <directory>./classes/</directory>
+      <directory>./src/</directory>
     </whitelist>
   </filter>
 </phpunit>
