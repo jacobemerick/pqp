@@ -5,9 +5,9 @@
  * Author : Created by Ryan Campbell
  * URL : http://particletree.com/features/php-quick-profiler/
  * Description : This class processes the logs and organizes the data
- * for output to the browser. Initialize this class with a start time at
- * the beginning of your code, and then call the display method when your
- * code is terminating.
+ *  for output to the browser. Initialize this class with a start time
+ *  at the beginning of your code, and then call the display method when
+ *  your code is terminating.
 *****************************************/
 
 namespace Particletree\Pqp;
@@ -42,52 +42,66 @@ class PhpQuickProfiler
      */
     protected function gatherConsoleData()
     {
-    $console = array(
-      'messages' => array(),
-      'totals' => array(
-        'log' => 0,
-        'memory' => 0,
-        'error' => 0,
-        'speed' => 0
-      ));
-    $logs = $this->console->getLogs();
-      foreach($logs as $log) {
-        if($log['type'] == 'log') {
-          $message = array(
-            'data' => print_r($log['data'], true),
-            'type' => 'log'
-          );
-          $console['totals']['log']++;
+        $console = array(
+            'messages' => array(),
+            'count'    => array(
+                'log'    => 0,
+                'memory' => 0,
+                'error'  => 0,
+                'speed'  => 0
+            )
+        );
+
+        foreach ($this->console->getLogs() as $log) {
+            switch($log['type']) {
+                case 'log':
+                    $message = array(
+                        'data' => print_r($log['data'], true),
+                        'type' => 'log'
+                    );
+                    $console['count']['log']++;
+                    break;
+                case 'memory':
+                    $message = array(
+                        'name' => $log['name'],
+                        'data' => self::getReadableFileSize($log['data']),
+                        'type' => 'memory'
+                    );
+                    if (!empty($log['data_type'])) {
+                        $message['data_type'] = $log['data_type'];
+                    }
+                    $console['count']['memory']++;
+                    break;
+                case 'error':
+                    $message = array(
+                        'data' => $log['data'],
+                        'file' => $log['file'],
+                        'line' => $log['line'],
+                        'type' => 'error'
+                    );
+                    $console['count']['error']++;
+                    break;
+                case 'speed':
+                    $elapsedTime = $log['data'] - $this->startTime;
+                    $message = array(
+                        'name' => $log['name'],
+                        'data' => self::getReadableTime($elapsedTime),
+                        'type' => 'speed'
+                    );
+                    $console['count']['speed']++;
+                    break;
+                default:
+                    $message = array(
+                        'data' => "Unrecognized console log type: {$log['type']}",
+                        'type' => 'error'
+                    );
+                    $console['count']['error']++;
+                    break;
+            }
+            array_push($console['messages'], $message);
         }
-        elseif($log['type'] == 'memory') {
-          $message = array(
-            'name'    => $log['name'],
-            'data_type'    => $log['data_type'],
-            'data'   => $this->getReadableFileSize($log['data']),
-            'type' => 'memory'
-          );
-          $console['totals']['memory']++;
-        }
-        elseif($log['type'] == 'speed') {
-          $message = array(
-            'name' => $log['name'],
-            'data'    => $this->getReadableTime(($log['data'] - $this->startTime) * 1000),
-            'type' => 'speed'
-          );
-          $console['totals']['speed']++;
-        } else {
-          $message = array(
-            'data' => $log['data'],
-            'type' => 'error',
-            'file' => $log['file'],
-            'line' => $log['line']
-          );
-          $console['totals']['error']++;
-        }
-        array_push($console['messages'], $message);
-      }
-    $this->output['logs'] = array('console' => $console);
-  }
+        return $console;
+    }
   
   /*-------------------------------------------
       AGGREGATE DATA ON THE FILES INCLUDED
@@ -177,7 +191,7 @@ class PhpQuickProfiler
   
   public function gatherSpeedData() {
     $speedTotals = array();
-    $speedTotals['total'] = $this->getReadableTime((microtime(true) - $this->startTime)*1000);
+    $speedTotals['total'] = self::getReadableTime((microtime(true) - $this->startTime));
     $speedTotals['allowed'] = ini_get("max_execution_time");
     $this->output['speedTotals'] = $speedTotals;
   }
@@ -201,36 +215,42 @@ class PhpQuickProfiler
          if ($sizestring == $sizes[0]) { $retstring = '%01d %s'; } // Bytes aren't normally fractional
          return sprintf($retstring, $size, $sizestring);
   }
-  
-  public function getReadableTime($time) {
-    $ret = $time;
-    $formatter = 0;
-    $formats = array('ms', 's', 'm');
-    if($time >= 1000 && $time < 60000) {
-      $formatter = 1;
-      $ret = ($time / 1000);
+
+    /**
+     * Static formatter for human-readable time
+     * Only handles time up to 60 minutes gracefully
+     *
+     * @param integer $time time in seconds
+     * @return string
+     */
+    public static function getReadableTime($time)
+    {
+        $unit = 's';
+
+        if ($time < 1) {
+            $time *= 1000;
+            $unit = 'ms';
+        } else if ($time > 60) {
+            $time /= 60;
+            $unit = 'm';
+        }
+
+        $time = number_format($time, 3);
+        return "{$time} {$unit}";
     }
-    if($time >= 60000) {
-      $formatter = 2;
-      $ret = ($time / 1000) / 60;
-    }
-    $ret = number_format($ret,3,'.','') . ' ' . $formats[$formatter];
-    return $ret;
-  }
   
   /*---------------------------------------------------------
        DISPLAY TO THE SCREEN -- CALL WHEN CODE TERMINATING
   -----------------------------------------------------------*/
   
-  public function display($db = '', $master_db = '') {
+  public function display($db = '') {
     $this->db = $db;
-    $this->master_db = $master_db;
-    $this->gatherConsoleData();
+    $console = $this->gatherConsoleData();
     $this->gatherFileData();
     $this->gatherMemoryData();
     $this->gatherQueryData();
     $this->gatherSpeedData();
-    $display = new displayPqp();
+    $display = new Display($console);
     $display($this->output);
   }
 }

@@ -17,8 +17,15 @@
 
 namespace Particletree\Pqp;
 
-class displayPqp
+class Display
 {
+
+    protected $console_data;
+
+    public function __construct($console_data)
+    {
+        $this->console_data = $console_data;
+    }
 
     public function __invoke($output)
     {
@@ -71,8 +78,6 @@ echo <<<JAVASCRIPT
 		}
 	}
 	
-  setTimeout(function(){document.getElementById("pqp-container").style.display = "block"}, 10);
-	
 	//http://www.bigbold.com/snippets/posts/show/2630
 	function addClassName(objElement, strClass, blnMayAlreadyExist){
 	   if ( objElement.className ){
@@ -108,18 +113,7 @@ echo <<<JAVASCRIPT
 	      objElement.className = arrList.join(' ');
 	   }
 	}
-
-	//http://ejohn.org/projects/flexible-javascript-events/
-	function addEvent( obj, type, fn ) {
-	  if ( obj.attachEvent ) {
-	    obj["e"+type+fn] = fn;
-	    obj[type+fn] = function() { obj["e"+type+fn]( window.event ) };
-	    obj.attachEvent( "on"+type, obj[type+fn] );
-	  } 
-	  else{
-	    obj.addEventListener( type, fn, false );	
-	  }
-	}
+setTimeout(function(){document.getElementById("pqp-container").style.display = "block"}, 100);
 </script>
 JAVASCRIPT;
 
@@ -131,7 +125,7 @@ STYLESHEETS;
 
 echo '<div id="pqp-container" class="pQp" style="display:none">';
 
-$logCount = count($output['logs']['console']['messages']);
+$logCount = array_sum($this->console_data['count']);
 $fileCount = count($output['files']);
 $memoryUsed = $output['memoryTotals']['used'];
 $queryCount = $output['queryTotals']['count'];
@@ -171,21 +165,20 @@ if($logCount ==  0) {
 	echo '<h3>This panel has no log items.</h3>';
 }
 else {
-  $console = $output['logs']['console'];
 	echo '<table class="side" cellspacing="0">
 		<tr>
-			<td class="alt1"><var>'.$console['totals']['log'].'</var><h4>Logs</h4></td>
-			<td class="alt2"><var>'.$console['totals']['error'].'</var> <h4>Errors</h4></td>
+			<td class="alt1"><var>'.$this->console_data['count']['log'].'</var><h4>Logs</h4></td>
+			<td class="alt2"><var>'.$this->console_data['count']['error'].'</var> <h4>Errors</h4></td>
 		</tr>
 		<tr>
-			<td class="alt3"><var>'.$console['totals']['memory'].'</var> <h4>Memory</h4></td>
-			<td class="alt4"><var>'.$console['totals']['speed'].'</var> <h4>Speed</h4></td>
+			<td class="alt3"><var>'.$this->console_data['count']['memory'].'</var> <h4>Memory</h4></td>
+			<td class="alt4"><var>'.$this->console_data['count']['speed'].'</var> <h4>Speed</h4></td>
 		</tr>
 		</table>
 		<table class="main" cellspacing="0">';
 		
 		$class = '';
-		foreach($output['logs']['console']['messages'] as $log) {
+		foreach($this->console_data['messages'] as $log) {
 			echo '<tr class="log-'.$log['type'].'">
 				<td class="type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
@@ -193,7 +186,11 @@ else {
 				echo '<div><pre>'.$log['data'].'</pre></div>';
 			}
 			elseif($log['type'] == 'memory') {
-				echo '<div><pre>'.$log['data'].'</pre> <em>'.$log['data_type'].'</em>: '.$log['name'].' </div>';
+				echo '<div><pre>'.$log['data'].'</pre>';
+          if (!empty($log['data_type'])) {
+            echo '<em>'.$log['data_type'].'</em>: ';
+          }
+        echo $log['name'].' </div>';
 			}
 			elseif($log['type'] == 'speed') {
 				echo '<div><pre>'.$log['data'].'</pre> <em>'.$log['name'].'</em></div>';
@@ -214,7 +211,7 @@ echo '</div>';
 
 echo '<div id="pqp-speed" class="pqp-box">';
 
-if($output['logs']['speedCount'] ==  0) {
+if($this->console_data['count']['speed'] ==  0) {
 	echo '<h3>This panel has no log items.</h3>';
 }
 else {
@@ -225,7 +222,7 @@ else {
 		<table class="main" cellspacing="0">';
 		
 		$class = '';
-		foreach($output['logs']['console'] as $log) {
+		foreach($this->console_data['messages'] as $log) {
 			if($log['type'] == 'speed') {
 				echo '<tr class="log-'.$log['type'].'">
 				<td class="'.$class.'">';
@@ -279,7 +276,7 @@ echo '</div>';
 
 echo '<div id="pqp-memory" class="pqp-box">';
 
-if($output['logs']['memoryCount'] ==  0) {
+if($this->console_data['count']['memory'] ==  0) {
 	echo '<h3>This panel has no log items.</h3>';
 }
 else {
@@ -290,10 +287,14 @@ else {
 		<table class="main" cellspacing="0">';
 		
 		$class = '';
-		foreach($output['logs']['console'] as $log) {
+		foreach($this->console_data['messages'] as $log) {
 			if($log['type'] == 'memory') {
 				echo '<tr class="log-'.$log['type'].'">';
-				echo '<td class="'.$class.'"><b>'.$log['data'].'</b> <em>'.$log['dataType'].'</em>: '.$log['name'].'</td>';
+				echo '<td class="'.$class.'"><b>'.$log['data'].'</b>';
+          if ($log['data_type']) {
+            echo '<em>'.$log['data_type'].'</em>: ';
+          }
+        echo $log['name'].'</td>';
 				echo '</tr>';
 				if($class == '') $class = 'alt';
 				else $class = '';

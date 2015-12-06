@@ -39,17 +39,19 @@ class Console
      * @param mixed $object
      * @param string $name
      */
-    public function logMemory($object = null, $name = '')
+    public function logMemory($object = null, $name = 'PHP')
     {
         $memory = memory_get_usage();
+        $data_type = '';
         if (!is_null($object)) {
             $memory = strlen(serialize($object));
+            $data_type = gettype($object);
         }
 
         array_push($this->store, array(
             'name'      => $name,
             'data'      => $memory,
-            'data_type' => gettype($object),
+            'data_type' => $data_type,
             'type'      => 'memory'
         ));
     }
