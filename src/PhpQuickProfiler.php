@@ -34,38 +34,24 @@ class PhpQuickProfiler
         }
         $this->startTime = $startTime;
     }
- 
-  /*-------------------------------------------
-      AGGREGATE DATA ON THE FILES INCLUDED
-  -------------------------------------------*/
-  
-  public function gatherFileData() {
-    $files = get_included_files();
-    $fileList = array();
-    $fileTotals = array(
-      "count" => count($files),
-      "size" => 0,
-      "largest" => 0,
-    );
 
-    foreach($files as $file) {
-      $size = filesize($file);
-      $fileList[] = array(
-          'name' => $file,
-          'size' => $this->getReadableFileSize($size)
-        );
-      $fileTotals['size'] += $size;
-      if($size > $fileTotals['largest']) $fileTotals['largest'] = $size;
+    /**
+     * Get data about files loaded for the application to current point
+     *
+     * @returns array
+     */
+    public function gatherFileData()
+    {
+        $files = get_included_files();
+        $data = array();
+        foreach ($files as $file) {
+            array_push($data, array(
+                'name' => $file,
+                'size' => filesize($file)
+            ));
+        }
+        return $data;
     }
-    
-    $fileTotals['size'] = $this->getReadableFileSize($fileTotals['size']);
-    $fileTotals['largest'] = $this->getReadableFileSize($fileTotals['largest']);
-
-    return array(
-      'files' => $fileList,
-      'fileTotals' => $fileTotals
-    );
-  }
 
     /**
      * Get data about memory usage of the application
@@ -97,12 +83,12 @@ class PhpQuickProfiler
       foreach($this->db->queries as $query) {
         $query = $this->attemptToExplainQuery($query);
         $queryTotals['time'] += $query['time'];
-        $query['time'] = $this->getReadableTime($query['time']);
+        $query['time'] = Display::getReadableTime($query['time']);
         $queries[] = $query;
       }
     }
     
-    $queryTotals['time'] = $this->getReadableTime($queryTotals['time']);
+    $queryTotals['time'] = Display::getReadableTime($queryTotals['time']);
     $this->output['queries'] = $queries;
     $this->output['queryTotals'] = $queryTotals;
   }
@@ -138,50 +124,6 @@ class PhpQuickProfiler
             'allowed' => $allowedTime
         );
     }
-  
-  /*-------------------------------------------
-       HELPER FUNCTIONS TO FORMAT DATA
-  -------------------------------------------*/
-  
-  public function getReadableFileSize($size, $retstring = null) {
-          // adapted from code at http://aidanlister.com/repos/v/function.size_readable.php
-         $sizes = array('bytes', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-
-         if ($retstring === null) { $retstring = '%01.2f %s'; }
-
-    $lastsizestring = end($sizes);
-
-    foreach ($sizes as $sizestring) {
-          if ($size < 1024) { break; }
-             if ($sizestring != $lastsizestring) { $size /= 1024; }
-         }
-         if ($sizestring == $sizes[0]) { $retstring = '%01d %s'; } // Bytes aren't normally fractional
-         return sprintf($retstring, $size, $sizestring);
-  }
-
-    /**
-     * Static formatter for human-readable time
-     * Only handles time up to 60 minutes gracefully
-     *
-     * @param integer $time time in seconds
-     * @return string
-     */
-    public static function getReadableTime($time)
-    {
-        $unit = 's';
-
-        if ($time < 1) {
-            $time *= 1000;
-            $unit = 'ms';
-        } else if ($time > 60) {
-            $time /= 60;
-            $unit = 'm';
-        }
-
-        $time = number_format($time, 3);
-        return "{$time} {$unit}";
-    }
-  
 
     /**
      * Triggers end display of the profiling data

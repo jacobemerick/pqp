@@ -83,10 +83,39 @@ class Display
         $this->output['console'] = $console_data;
     }
 
-    public function setFileData(array $file_data)
+    /**
+     * Sets file data
+     *
+     * @param array $data
+     */
+    public function setFileData(array $data)
     {
-        $this->output['files'] = $file_data['files'];
-        $this->output['fileTotals'] = $file_data['fileTotals'];
+        $fileData = array(
+            'fileList'   => array(),
+            'fileTotals' => array(
+                'count'   => count($data),
+                'size'    => 0,
+                'largest' => 0
+            )
+        );
+
+        foreach ($data as $file) {
+            array_push($fileData['fileList'], array(
+                'name' => $file['name'],
+                'size' => self::getReadableMemory($file['size'])
+            ));
+
+            $fileData['fileTotals']['size'] += $file['size'];
+            if ($file['size'] > $fileData['fileTotals']['largest']) {
+                $fileData['fileTotals']['largest'] = $file['size'];
+            }
+        }
+
+        $fileData['fileTotals']['size'] = self::getReadableMemory($fileData['fileTotals']['size']);
+        $fileData['fileTotals']['largest'] = self::getReadableMemory($fileData['fileTotals']['largest']);
+
+        $this->output['files'] = $fileData['fileList'];
+        $this->output['fileTotals'] = $fileData['fileTotals'];
     }
 
     /**
