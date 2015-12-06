@@ -134,17 +134,21 @@ class PhpQuickProfiler
       'fileTotals' => $fileTotals
     );
   }
-  
-  /*-------------------------------------------
-       MEMORY USAGE AND MEMORY AVAILABLE
-  -------------------------------------------*/
-  
-  public function gatherMemoryData() {
-    $memoryTotals = array();
-    $memoryTotals['used'] = $this->getReadableFileSize(memory_get_peak_usage());
-    $memoryTotals['total'] = ini_get("memory_limit");
-    return $memoryTotals;
-  }
+
+    /**
+     * Get data about memory usage of the application
+     *
+     * @returns array
+     */
+    public function gatherMemoryData()
+    {
+        $usedMemory = memory_get_peak_usage();
+        $allowedMemory = ini_get('memory_limit');
+        return array(
+            'used'    => $usedMemory,
+            'allowed' => $allowedMemory
+        );
+    }
   
   /*--------------------------------------------------------
        QUERY DATA -- DATABASE OBJECT WITH LOGGING REQUIRED

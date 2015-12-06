@@ -97,7 +97,7 @@ echo '<div id="pqp-container" class="pQp" style="display:none">';
 
 $logCount = array_sum($output['console']['count']);
 $fileCount = count($output['files']);
-$memoryUsed = $output['memoryTotals']['used'];
+$memoryUsed = $output['memory']['used'];
 $queryCount = $output['queryTotals']['count'];
 $speedTotal = $output['speed']['elapsed'];
 
@@ -251,8 +251,8 @@ if($output['console']['count']['memory'] ==  0) {
 }
 else {
 	echo '<table class="side" cellspacing="0">
-		  <tr><td><var>'.$output['memoryTotals']['used'].'</var><h4>Used Memory</h4></td></tr>
-		  <tr><td class="alt"><var>'.$output['memoryTotals']['total'].'</var> <h4>Total Available</h4></td></tr>
+		  <tr><td><var>'.$output['memory']['used'].'</var><h4>Used Memory</h4></td></tr>
+		  <tr><td class="alt"><var>'.$output['memory']['allowed'].'</var> <h4>Total Available</h4></td></tr>
 		 </table>
 		<table class="main" cellspacing="0">';
 		

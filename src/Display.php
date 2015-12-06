@@ -32,9 +32,17 @@ class Display
         $this->output['fileTotals'] = $file_data['fileTotals'];
     }
 
-    public function setMemoryData(array $memory_data)
+    /**
+     * Sets memory data
+     *
+     * @param array $data
+     */
+    public function setMemoryData(array $data)
     {
-        $this->output['memoryTotals'] = $memory_data;
+        $this->output['memory'] = array(
+            'used'    => self::getReadableMemory($data['used']),
+            'allowed' => $data['allowed']
+        );
     }
 
     public function setQueryData(array $query_data)
@@ -77,6 +85,23 @@ class Display
         return "{$time} {$unit}";
     }
 
+    /**
+     * Static formatter for human-readable memory
+     *
+     * @param double  $size
+     * @param integer $decimals
+     */
+    public static function getReadableMemory($size, $decimals = 2)
+    {
+        $unitOptions = array('b', 'k', 'M', 'G');
+
+        $base = log($size, 1024);
+
+        $memory = round(pow(1024, $base - floor($base)), $decimals);
+        $unit = $unitOptions[floor($base)];
+        return "{$memory} {$unit}";
+    }
+ 
     public function __invoke()
     {
         $output = $this->output;
