@@ -99,7 +99,7 @@ $logCount = array_sum($output['console']['count']);
 $fileCount = count($output['files']);
 $memoryUsed = $output['memoryTotals']['used'];
 $queryCount = $output['queryTotals']['count'];
-$speedTotal = $output['speedTotals']['total'];
+$speedTotal = $output['speed']['elapsed'];
 
 echo <<<PQPTABS
 <div id="pQp" class="console">
@@ -186,8 +186,8 @@ if($output['console']['count']['speed'] ==  0) {
 }
 else {
 	echo '<table class="side" cellspacing="0">
-		  <tr><td><var>'.$output['speedTotals']['total'].'</var><h4>Load Time</h4></td></tr>
-		  <tr><td class="alt"><var>'.$output['speedTotals']['allowed'].'</var> <h4>Max Execution Time</h4></td></tr>
+		  <tr><td><var>'.$output['speed']['elapsed'].'</var><h4>Load Time</h4></td></tr>
+		  <tr><td class="alt"><var>'.$output['speed']['allowed'].'</var> <h4>Max Execution Time</h4></td></tr>
 		 </table>
 		<table class="main" cellspacing="0">';
 		

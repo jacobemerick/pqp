@@ -42,9 +42,39 @@ class Display
         // the void
     }
 
-    public function setSpeedData(array $speed_data)
+    /**
+     * Sets speed data
+     *
+     * @param array $data
+     */
+    public function setSpeedData(array $data)
     {
-        $this->output['speedTotals'] = $speed_data;
+        $this->output['speed'] = array(
+            'elapsed' => self::getReadableTime($data['elapsed']),
+            'allowed' => self::getReadableTime($data['allowed'], 0)
+        );
+    }
+
+    /**
+     * Static formatter for human-readable time
+     * Only handles time up to 60 minutes gracefully
+     *
+     * @param double  $time
+     * @param integer $decimals
+     * @return string
+     */
+    public static function getReadableTime($time, $decimals = 3)
+    {
+        $unit = 's';
+        if ($time < 1) {
+            $time *= 1000;
+            $unit = 'ms';
+        } else if ($time > 60) {
+            $time /= 60;
+            $unit = 'm';
+        }
+        $time = number_format($time, $decimals);
+        return "{$time} {$unit}";
     }
 
     public function __invoke()

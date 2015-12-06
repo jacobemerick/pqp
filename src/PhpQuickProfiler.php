@@ -187,17 +187,21 @@ class PhpQuickProfiler
     }
     return $query;
   }
-  
-  /*-------------------------------------------
-       SPEED DATA FOR ENTIRE PAGE LOAD
-  -------------------------------------------*/
-  
-  public function gatherSpeedData() {
-    $speedTotals = array();
-    $speedTotals['total'] = self::getReadableTime((microtime(true) - $this->startTime));
-    $speedTotals['allowed'] = ini_get("max_execution_time");
-    return $speedTotals;
-  }
+
+    /**
+     * Get data about speed of the application
+     *
+     * @returns array
+     */
+    public function gatherSpeedData()
+    {
+        $elapsedTime = microtime(true) - $this->startTime;
+        $allowedTime = ini_get('max_execution_time');
+        return array(
+            'elapsed' => $elapsedTime,
+            'allowed' => $allowedTime
+        );
+    }
   
   /*-------------------------------------------
        HELPER FUNCTIONS TO FORMAT DATA
