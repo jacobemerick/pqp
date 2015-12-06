@@ -15,9 +15,15 @@
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-function displayPqp($output) {
+namespace Particletree\Pqp;
+
+class displayPqp
+{
+
+    public function __invoke($output)
+    {
 	
-$css = file_get_contents(__DIR__ . '/css/pQp.css');
+$css = file_get_contents(__DIR__ . '/../css/pQp.css');
 		
 echo <<<JAVASCRIPT
 <!-- JavaScript -->
@@ -343,5 +349,4 @@ FOOTER;
 echo '</div></div>';
 
 }
-
-?>
+}

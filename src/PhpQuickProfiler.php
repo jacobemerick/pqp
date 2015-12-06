@@ -34,12 +34,14 @@ class PhpQuickProfiler
         }
         $this->startTime = $startTime;
     }
-  
-  /*-------------------------------------------
-       FORMAT THE DIFFERENT TYPES OF LOGS
-  -------------------------------------------*/
-  
-  public function gatherConsoleData() {
+ 
+    /**
+     * Formats the logs from the console
+     *
+     * @return array
+     */
+    protected function gatherConsoleData()
+    {
     $console = array(
       'messages' => array(),
       'totals' => array(
@@ -100,7 +102,7 @@ class PhpQuickProfiler
       "largest" => 0,
     );
 
-    foreach($files as $key => $file) {
+    foreach($files as $file) {
       $size = filesize($file);
       $fileList[] = array(
           'name' => $file,
@@ -139,7 +141,7 @@ class PhpQuickProfiler
     
     if($this->db != '') {
       $queryTotals['count'] += $this->db->queryCount;
-      foreach($this->db->queries as $key => $query) {
+      foreach($this->db->queries as $query) {
         $query = $this->attemptToExplainQuery($query);
         $queryTotals['time'] += $query['time'];
         $query['time'] = $this->getReadableTime($query['time']);
@@ -228,7 +230,7 @@ class PhpQuickProfiler
     $this->gatherMemoryData();
     $this->gatherQueryData();
     $this->gatherSpeedData();
-    require_once __DIR__ . '/../display.php';
-    displayPqp($this->output);
+    $display = new displayPqp();
+    $display($this->output);
   }
 }
