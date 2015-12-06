@@ -16,12 +16,10 @@
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 //require_once('classes/PhpQuickProfiler.php');
-//require_once('classes/MySqlDatabase.php');
 
 class PQPExample {
 	
 	private $profiler;
-	private $db = '';
 	
 	public function __construct() {
 		$this->profiler = new ParticleTree\Pqp\PhpQuickProfiler(PhpQuickProfiler::getMicroTime());
@@ -54,27 +52,6 @@ class PQPExample {
 		}
 	}
 	
-	/*-------------------------------------
-	     DATABASE OBJECT TO LOG QUERIES
-	--------------------------------------*/
-	
-	public function sampleDatabaseData() {
-		/*$this->db = new ParticleTree\Pqp\MySqlDatabase(
-			'your DB host', 
-			'your DB user',
-			'your DB password');
-		$this->db->connect(true);
-		$this->db->changeDatabase('your db name');
-		
-		$sql = 'SELECT PostId FROM Posts WHERE PostId > 2';
-		$rs = $this->db->query($sql);
-		
-		$sql = 'SELECT COUNT(PostId) FROM Posts';
-		$rs = $this->db->query($sql);
-		
-		$sql = 'SELECT COUNT(PostId) FROM Posts WHERE PostId != 1';
-		$rs = $this->db->query($sql);*/
-	}
 	
 	/*-----------------------------------
 	     EXAMPLE MEMORY LEAK DETECTED
@@ -101,10 +78,6 @@ class PQPExample {
 		Console::logSpeed('Time taken to get to line '.__LINE__);
 		Console::logSpeed('Time taken to get to line '.__LINE__);
 		Console::logSpeed('Time taken to get to line '.__LINE__);
-	}
-	
-	public function __destruct() {
-		$this->profiler->display($this->db);
 	}
 	
 }

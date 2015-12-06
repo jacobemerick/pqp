@@ -6,6 +6,9 @@ http://particletree.com/features/php-quick-profiler/
 [![Test Coverage](https://codeclimate.com/github/jacobemerick/pqp/badges/coverage.svg)](https://codeclimate.com/github/jacobemerick/pqp/coverage)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jacobemerick/pqp/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jacobemerick/pqp/?branch=master)
 
+## WIP - documentation is out of date
+
+
 #### On This Page ####
 
 1. Introduction and Overview of Files
