@@ -128,8 +128,11 @@ class PhpQuickProfiler
     
     $fileTotals['size'] = $this->getReadableFileSize($fileTotals['size']);
     $fileTotals['largest'] = $this->getReadableFileSize($fileTotals['largest']);
-    $this->output['files'] = $fileList;
-    $this->output['fileTotals'] = $fileTotals;
+
+    return array(
+      'files' => $fileList,
+      'fileTotals' => $fileTotals
+    );
   }
   
   /*-------------------------------------------
@@ -140,7 +143,7 @@ class PhpQuickProfiler
     $memoryTotals = array();
     $memoryTotals['used'] = $this->getReadableFileSize(memory_get_peak_usage());
     $memoryTotals['total'] = ini_get("memory_limit");
-    $this->output['memoryTotals'] = $memoryTotals;
+    return $memoryTotals;
   }
   
   /*--------------------------------------------------------
@@ -193,7 +196,7 @@ class PhpQuickProfiler
     $speedTotals = array();
     $speedTotals['total'] = self::getReadableTime((microtime(true) - $this->startTime));
     $speedTotals['allowed'] = ini_get("max_execution_time");
-    $this->output['speedTotals'] = $speedTotals;
+    return $speedTotals;
   }
   
   /*-------------------------------------------
@@ -239,18 +242,20 @@ class PhpQuickProfiler
         return "{$time} {$unit}";
     }
   
-  /*---------------------------------------------------------
-       DISPLAY TO THE SCREEN -- CALL WHEN CODE TERMINATING
-  -----------------------------------------------------------*/
-  
-  public function display($db = '') {
-    $this->db = $db;
-    $console = $this->gatherConsoleData();
-    $this->gatherFileData();
-    $this->gatherMemoryData();
-    $this->gatherQueryData();
-    $this->gatherSpeedData();
-    $display = new Display($console);
-    $display($this->output);
-  }
+
+    /**
+     * Triggers end display of the profiling data
+     *
+     * @param Display $display
+     */
+    public function display(Display $display)
+    {
+        $display->setConsoleData($this->gatherConsoleData());
+        $display->setFileData($this->gatherFileData());
+        $display->setMemoryData($this->gatherMemoryData());
+        $display->setQueryData($this->gatherQueryData());
+        $display->setSpeedData($this->gatherSpeedData());
+
+        $display();
+    }
 }

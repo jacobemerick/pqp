@@ -95,7 +95,7 @@ STYLESHEETS;
 
 echo '<div id="pqp-container" class="pQp" style="display:none">';
 
-$logCount = array_sum($this->console_data['count']);
+$logCount = array_sum($output['console']['count']);
 $fileCount = count($output['files']);
 $memoryUsed = $output['memoryTotals']['used'];
 $queryCount = $output['queryTotals']['count'];
@@ -131,24 +131,24 @@ PQPTABS;
 
 echo '<div id="pqp-console" class="pqp-box">';
 
-if($logCount ==  0) {
+if(count($output['console']) ==  0) {
 	echo '<h3>This panel has no log items.</h3>';
 }
 else {
 	echo '<table class="side" cellspacing="0">
 		<tr>
-			<td class="alt1"><var>'.$this->console_data['count']['log'].'</var><h4>Logs</h4></td>
-			<td class="alt2"><var>'.$this->console_data['count']['error'].'</var> <h4>Errors</h4></td>
+			<td class="alt1"><var>'.$output['console']['count']['log'].'</var><h4>Logs</h4></td>
+			<td class="alt2"><var>'.$output['console']['count']['error'].'</var> <h4>Errors</h4></td>
 		</tr>
 		<tr>
-			<td class="alt3"><var>'.$this->console_data['count']['memory'].'</var> <h4>Memory</h4></td>
-			<td class="alt4"><var>'.$this->console_data['count']['speed'].'</var> <h4>Speed</h4></td>
+			<td class="alt3"><var>'.$output['console']['count']['memory'].'</var> <h4>Memory</h4></td>
+			<td class="alt4"><var>'.$output['console']['count']['speed'].'</var> <h4>Speed</h4></td>
 		</tr>
 		</table>
 		<table class="main" cellspacing="0">';
 		
 		$class = '';
-		foreach($this->console_data['messages'] as $log) {
+		foreach($output['console']['messages'] as $log) {
 			echo '<tr class="log-'.$log['type'].'">
 				<td class="type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
@@ -181,7 +181,7 @@ echo '</div>';
 
 echo '<div id="pqp-speed" class="pqp-box">';
 
-if($this->console_data['count']['speed'] ==  0) {
+if($output['console']['count']['speed'] ==  0) {
 	echo '<h3>This panel has no log items.</h3>';
 }
 else {
@@ -192,7 +192,7 @@ else {
 		<table class="main" cellspacing="0">';
 		
 		$class = '';
-		foreach($this->console_data['messages'] as $log) {
+		foreach($output['console']['messages'] as $log) {
 			if($log['type'] == 'speed') {
 				echo '<tr class="log-'.$log['type'].'">
 				<td class="'.$class.'">';
@@ -246,7 +246,7 @@ echo '</div>';
 
 echo '<div id="pqp-memory" class="pqp-box">';
 
-if($this->console_data['count']['memory'] ==  0) {
+if($output['console']['count']['memory'] ==  0) {
 	echo '<h3>This panel has no log items.</h3>';
 }
 else {
@@ -257,7 +257,7 @@ else {
 		<table class="main" cellspacing="0">';
 		
 		$class = '';
-		foreach($this->console_data['messages'] as $log) {
+		foreach($output['console']['messages'] as $log) {
 			if($log['type'] == 'memory') {
 				echo '<tr class="log-'.$log['type'].'">';
 				echo '<td class="'.$class.'"><b>'.$log['data'].'</b>';
