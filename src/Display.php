@@ -21,8 +21,65 @@ class Display
     {
     }
 
-    public function setConsoleData(array $console_data)
+    public function setConsole(Console $console)
     {
+        $console_data = array(
+            'messages' => array(),
+            'count'    => array(
+                'log'    => 0,
+                'memory' => 0,
+                'error'  => 0,
+                'speed'  => 0
+            )
+        );
+        foreach ($console->getLogs() as $log) {
+            switch($log['type']) {
+                case 'log':
+                    $message = array(
+                        'data' => print_r($log['data'], true),
+                        'type' => 'log'
+                    );
+                    $console_data['count']['log']++;
+                    break;
+                case 'memory':
+                    $message = array(
+                        'name' => $log['name'],
+                        'data' => self::getReadableMemory($log['data']),
+                        'type' => 'memory'
+                    );
+                    if (!empty($log['data_type'])) {
+                        $message['data_type'] = $log['data_type'];
+                    }
+                    $console_data['count']['memory']++;
+                    break;
+                case 'error':
+                    $message = array(
+                        'data' => $log['data'],
+                        'file' => $log['file'],
+                        'line' => $log['line'],
+                        'type' => 'error'
+                    );
+                    $console_data['count']['error']++;
+                    break;
+                case 'speed':
+                    $elapsedTime = $log['data'] - $this->startTime;
+                    $message = array(
+                        'name' => $log['name'],
+                        'data' => self::getReadableTime($elapsedTime),
+                        'type' => 'speed'
+                    );
+                    $console_data['count']['speed']++;
+                    break;
+                default:
+                    $message = array(
+                        'data' => "Unrecognized console log type: {$log['type']}",
+                        'type' => 'error'
+                    );
+                    $console_data['count']['error']++;
+                    break;
+            }
+            array_push($console_data['messages'], $message);
+        }
         $this->output['console'] = $console_data;
     }
 

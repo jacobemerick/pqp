@@ -35,74 +35,6 @@ class PhpQuickProfiler
         $this->startTime = $startTime;
     }
  
-    /**
-     * Formats the logs from the console
-     *
-     * @return array
-     */
-    protected function gatherConsoleData()
-    {
-        $console = array(
-            'messages' => array(),
-            'count'    => array(
-                'log'    => 0,
-                'memory' => 0,
-                'error'  => 0,
-                'speed'  => 0
-            )
-        );
-
-        foreach ($this->console->getLogs() as $log) {
-            switch($log['type']) {
-                case 'log':
-                    $message = array(
-                        'data' => print_r($log['data'], true),
-                        'type' => 'log'
-                    );
-                    $console['count']['log']++;
-                    break;
-                case 'memory':
-                    $message = array(
-                        'name' => $log['name'],
-                        'data' => self::getReadableFileSize($log['data']),
-                        'type' => 'memory'
-                    );
-                    if (!empty($log['data_type'])) {
-                        $message['data_type'] = $log['data_type'];
-                    }
-                    $console['count']['memory']++;
-                    break;
-                case 'error':
-                    $message = array(
-                        'data' => $log['data'],
-                        'file' => $log['file'],
-                        'line' => $log['line'],
-                        'type' => 'error'
-                    );
-                    $console['count']['error']++;
-                    break;
-                case 'speed':
-                    $elapsedTime = $log['data'] - $this->startTime;
-                    $message = array(
-                        'name' => $log['name'],
-                        'data' => self::getReadableTime($elapsedTime),
-                        'type' => 'speed'
-                    );
-                    $console['count']['speed']++;
-                    break;
-                default:
-                    $message = array(
-                        'data' => "Unrecognized console log type: {$log['type']}",
-                        'type' => 'error'
-                    );
-                    $console['count']['error']++;
-                    break;
-            }
-            array_push($console['messages'], $message);
-        }
-        return $console;
-    }
-  
   /*-------------------------------------------
       AGGREGATE DATA ON THE FILES INCLUDED
   -------------------------------------------*/
@@ -258,7 +190,7 @@ class PhpQuickProfiler
      */
     public function display(Display $display)
     {
-        $display->setConsoleData($this->gatherConsoleData());
+        $display->setConsole($this->console);
         $display->setFileData($this->gatherFileData());
         $display->setMemoryData($this->gatherMemoryData());
         $display->setQueryData($this->gatherQueryData());
