@@ -1,37 +1,39 @@
 <?php
 
-/* - - - - - - - - - - - - - - - - - - - - -
-
- Title : PHP Quick Profiler Class
- Author : Created by Ryan Campbell
- URL : http://particletree.com/features/php-quick-profiler/
-
- Last Updated : April 22, 2009
-
- Description : This class processes the logs and organizes the data
- for output to the browser. Initialize this class with a start time at
- the beginning of your code, and then call the display method when your code
- is terminating.
-
-- - - - - - - - - - - - - - - - - - - - - */
+/*****************************************
+ * Title : PHP Quick Profiler Class
+ * Author : Created by Ryan Campbell
+ * URL : http://particletree.com/features/php-quick-profiler/
+ * Description : This class processes the logs and organizes the data
+ * for output to the browser. Initialize this class with a start time at
+ * the beginning of your code, and then call the display method when your
+ * code is terminating.
+*****************************************/
 
 namespace Particletree\Pqp;
 
-class PhpQuickProfiler {
-  
-  public $output = array();
+class PhpQuickProfiler
+{
 
-  protected $console;
-  
-  public function __construct($console, $startTime = null) {
-    $this->console = $console;
+    /** @var  Particletree\Pqp\Console */
+    protected $console;
 
-    if (is_null($startTime)) {
-        $startTime = microtime(true);
+    /** @var  integer */
+    protected $startTime;
+
+    /**
+     * @param Particletree\Pqp\Console $console
+     * @param integer                  $startTime
+     */
+    public function __construct(Console $console, $startTime = null)
+    {
+        $this->console = $console;
+
+        if (is_null($startTime)) {
+            $startTime = microtime(true);
+        }
+        $this->startTime = $startTime;
     }
-
-    $this->startTime = $startTime;
-  }
   
   /*-------------------------------------------
        FORMAT THE DIFFERENT TYPES OF LOGS
@@ -229,7 +231,4 @@ class PhpQuickProfiler {
     require_once __DIR__ . '/../display.php';
     displayPqp($this->output);
   }
-  
 }
-
-?>
