@@ -15,7 +15,7 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
         $console = new Console();
         $startTime = microtime(true);
 
-        $profiler = new PhpQuickProfiler($console, $startTime);
+        $profiler = new PhpQuickProfiler($console, null, $startTime);
 
         $this->assertAttributeSame($console, 'console', $profiler);
         $this->assertAttributeEquals($startTime, 'startTime', $profiler);
