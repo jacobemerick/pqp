@@ -15,19 +15,24 @@ namespace Particletree\Pqp;
 class PhpQuickProfiler
 {
 
-    /** @var  Particletree\Pqp\Console */
+    /** @var  Console */
     protected $console;
 
     /** @var  integer */
     protected $startTime;
 
+    /** @var  object */
+    protected $pdo;
+
     /**
-     * @param Particletree\Pqp\Console $console
-     * @param integer                  $startTime
+     * @param Console $console
+     * @param object  $pdo
+     * @param integer $startTime
      */
-    public function __construct(Console $console, $startTime = null)
+    public function __construct(Console $console, $pdo = null, $startTime = null)
     {
         $this->console = $console;
+        $this->pdo = $pdo;
 
         if (is_null($startTime)) {
             $startTime = microtime(true);
@@ -67,48 +72,49 @@ class PhpQuickProfiler
             'allowed' => $allowedMemory
         );
     }
-  
-  /*--------------------------------------------------------
-       QUERY DATA -- DATABASE OBJECT WITH LOGGING REQUIRED
-  ----------------------------------------------------------*/
-  
-  public function gatherQueryData() {
-    $queryTotals = array();
-    $queryTotals['count'] = 0;
-    $queryTotals['time'] = 0;
-    $queries = array();
-    
-    if($this->db != '') {
-      $queryTotals['count'] += $this->db->queryCount;
-      foreach($this->db->queries as $query) {
-        $query = $this->attemptToExplainQuery($query);
-        $queryTotals['time'] += $query['time'];
-        $query['time'] = Display::getReadableTime($query['time']);
-        $queries[] = $query;
-      }
+
+    /**
+     * Get data about sql usage of the application
+     *
+     * @param array $profiledQueries
+     * @returns array
+     */
+    public function gatherQueryData(array $profiledQueries)
+    {
+        $data = array();
+        foreach ($profiledQueries as $query) {
+            if ($query['function'] !== 'perform') {
+                continue;
+            }
+
+            array_push($data, array(
+                'sql'     => $query['statement'],
+                'explain' => $this->explainQuery($query['statement'], $query['bind_values']),
+                'time'    => $query['duration']
+            ));
+        }
+        return $data;
     }
-    
-    $queryTotals['time'] = Display::getReadableTime($queryTotals['time']);
-    $this->output['queries'] = $queries;
-    $this->output['queryTotals'] = $queryTotals;
-  }
-  
-  /*--------------------------------------------------------
-       CALL SQL EXPLAIN ON THE QUERY TO FIND MORE INFO
-  ----------------------------------------------------------*/
-  
-  function attemptToExplainQuery($query) {
-    try {
-      $sql = 'EXPLAIN '.$query['sql'];
-      $rs = $this->db->query($sql);
+
+    /**
+     * Attempts to explain a query
+     *
+     * @param string $query
+     * @param array  $parameters
+     * @return array
+     */
+    protected function explainQuery($query, $parameters)
+    {
+        $query = "EXPLAIN {$query}";
+        try {
+            $statement = $this->pdo->prepare($query);
+            $statement->execute($parameters);
+            return $statement->fetch(\PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+        return '';
     }
-    catch(Exception $e) {}
-    if($rs) {
-      $row = mysql_fetch_array($rs, MYSQL_ASSOC);
-      $query['explain'] = $row;
-    }
-    return $query;
-  }
 
     /**
      * Get data about speed of the application
@@ -129,13 +135,14 @@ class PhpQuickProfiler
      * Triggers end display of the profiling data
      *
      * @param Display $display
+     * @param array   $profiledQueries
      */
-    public function display(Display $display)
+    public function display(Display $display, array $profiledQueries = array())
     {
         $display->setConsole($this->console);
         $display->setFileData($this->gatherFileData());
         $display->setMemoryData($this->gatherMemoryData());
-        $display->setQueryData($this->gatherQueryData());
+        $display->setQueryData($this->gatherQueryData($profiledQueries));
         $display->setSpeedData($this->gatherSpeedData());
 
         $display();

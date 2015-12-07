@@ -131,9 +131,30 @@ class Display
         );
     }
 
-    public function setQueryData(array $query_data)
+    public function setQueryData(array $data)
     {
-        // the void
+        $queryData = array(
+            'queries'     => array(),
+            'queryTotals' => array(
+                'count'   => count($data),
+                'time'    => 0,
+            )
+        );
+
+        foreach ($data as $query) {
+            array_push($queryData['queries'], array(
+                'sql'     => $query['sql'],
+                'explain' => $query['explain'],
+                'time'    => self::getReadableTime($query['time'])
+            ));
+
+            $queryData['queryTotals']['time'] += $query['time'];
+        }
+
+        $queryData['queryTotals']['time'] = self::getReadableTime($queryData['queryTotals']['time']);
+
+        $this->output['queries'] = $queryData['queries'];
+        $this->output['queryTotals'] = $queryData['queryTotals'];
     }
 
     /**
