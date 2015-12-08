@@ -52,7 +52,7 @@
 	width:100%;
 }
 #pqp-console, #pqp-speed, #pqp-queries, #pqp-memory, #pqp-files{
-	background:url(../images/overlay.gif);
+	background: url(data:image/gif;base64,R0lGODlhAwADAIABAAAAAP///yH5BAEAAAEALAAAAAADAAMAAAIDRG5YADs=);
 	border-top:1px solid #ccc;
 	height:200px;
 	overflow:auto;
@@ -207,7 +207,7 @@
 }
 .pQp .side td{
 	padding:10px 0 5px 0;
-	background:url(../images/side.png) repeat-y right;
+	background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAHRCAYAAABTvCjlAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAG9JREFUeNrsykEKgEAQA8EZQUVW/P9v1+wPPHqoQJ9SPees7t6qarWnI53pSiPd6Vnnp4EgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIK/hK8AAwDLrAbmTOcZRgAAAABJRU5ErkJggg==) repeat-y right;
 }
 .pQp .side var{
 	color:#fff;
