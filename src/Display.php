@@ -227,8 +227,8 @@ class Display
     {
         $output = $this->output;
         // todo is this really the best way to load these?
-        $css = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");
-        $js = file_get_contents(__DIR__ . "./../{$this->options['script_path']}");
+        $styles = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");
+        $script = file_get_contents(__DIR__ . "./../{$this->options['script_path']}");
 
         require_once __DIR__ .'/../asset/display.tpl.php';
     }
