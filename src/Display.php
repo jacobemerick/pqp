@@ -15,10 +15,24 @@ class Display
 {
 
     /** @var  array */
+    protected $defaults = array(
+        'script_path' => 'asset/script.js',
+        'style_path'  => 'asset/style.css'
+    );
+
+    /** @var  array */
+    protected $options;
+
+    /** @var  array */
     protected $output;
 
-    public function __construct()
+    /**
+     * @param array $options
+     */
+    public function __construct(array $options = array())
     {
+        $options = array_intersect_key($options, $this->defaults);
+        $this->options = array_replace($this->defaults, $options);
     }
 
     public function setConsole(Console $console)
@@ -212,6 +226,10 @@ class Display
     public function __invoke()
     {
         $output = $this->output;
+        // todo is this really the best way to load these?
+        $css = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");
+        $js = file_get_contents(__DIR__ . "./../{$this->options['script_path']}");
+
         require_once __DIR__ .'/../asset/display.tpl.php';
     }
 }	
