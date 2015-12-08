@@ -182,22 +182,15 @@
 	font-family:Monaco, "Consolas", "Lucida Console", "Courier New", monospace;
 	font-size:11px;
 }
-.pQp .main td.alt{
+.pQp .main tr:nth-child(even) td {
 	background:#111;
-}
-.pQp .main tr.alt td{
-	background:#2E2E2E;
-	border-top:1px dotted #4E4E4E;
-}
-.pQp .main tr.alt td.alt{
-	background:#333;
 }
 .pQp .main td b{
 	float:right;
 	font-weight:normal;
 	color:#E6F387;
 }
-.pQp .main td:hover{
+.pQp .main tr td:hover {
 	background:#2E2E2E;
 }
 

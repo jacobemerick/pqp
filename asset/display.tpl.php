@@ -52,11 +52,10 @@
         </tr>
       </table>
       <table class="main" cellspacing="0">
-      <?php $class = '' ?>
       <?php foreach ($output['console']['messages'] as $log): ?>
         <tr class="log-<?php echo $log['type'] ?>">
           <td class="type"><?php echo $log['type'] ?></td>
-          <td class="<?php echo $class ?>">
+          <td>
           <?php if ($log['type'] == 'log'): ?>
             <div><pre><?php echo $log['data'] ?></pre></div>
           <?php elseif ($log['type'] == 'memory'): ?>
@@ -81,7 +80,6 @@
           <?php endif ?>
           </td>
         </tr>
-        <?php $class = ($class == '') ? 'alt' : '' ?>
       <?php endforeach ?>
       </table>
     <?php endif ?>
@@ -106,18 +104,16 @@
         </tr>
       </table>
       <table class="main" cellspacing="0">
-      <?php $class = '' ?>
       <?php foreach ($output['console']['messages'] as $log): ?>
         <?php if ($log['type'] == 'speed'): ?>
         <tr class="log-speed">
-          <td class="<?php echo $class ?>">
+          <td>
             <div>
               <pre><?php echo $log['data'] ?></pre>
               <em><?php echo $log['name'] ?></em>
             </div>
           </td>
         </tr>
-        <?php $class = ($class == '') ? 'alt' : '' ?>
         <?php endif ?>
       <?php endforeach ?>
       </table>
@@ -149,10 +145,9 @@
         </tr>
       </table>
       <table class="main" cellspacing="0">';
-      <?php $class = '' ?>
       <?php foreach ($output['queries'] as $query): ?>
         <tr>
-          <td class="<?php echo $class ?>">
+          <td>
             <?php echo $query['sql'] ?>
             <?php if ($query['explain']): ?>
             <em>
@@ -165,7 +160,6 @@
             <?php endif ?>
           </td>
         </tr>
-        <?php $class = ($class == '') ? 'alt' : '' ?>
       <?php endforeach ?>
       </table>
     <?php endif ?>
@@ -190,11 +184,10 @@
         </tr>
       </table>
       <table class="main" cellspacing="0">';
-      <?php $class = '' ?>
       <?php foreach ($output['console']['messages'] as $log): ?>
         <?php if ($log['type'] == 'memory'): ?>
         <tr class="log-memory">
-          <td class="<?php echo $class ?>">
+          <td>
             <b><?php echo $log['data'] ?></b>
             <?php if ($log['data_type']) : ?>
             <em><?php echo $log['data_type'] ?></em>:
@@ -202,7 +195,6 @@
             <?php echo $log['name'] ?>
           </td>
         </tr>
-        <?php $class = ($class == '') ? 'alt' : '' ?>
         <?php endif ?>
       <?php endforeach ?>
       </table>
@@ -234,15 +226,13 @@
         </tr>
       </table>
       <table class="main" cellspacing="0">
-      <?php $class = '' ?>
       <?php foreach ($output['files'] as $file): ?>
         <tr>
-          <td class="<?php echo $class ?>">
+          <td>
             <b><?php echo $file['size'] ?></b>
             <?php echo $file['name'] ?>
           </td>
         </tr>
-        <?php $class = ($class == '') ? 'alt' : '' ?>
       <?php endforeach ?>
       </table>
     <?php endif ?>
