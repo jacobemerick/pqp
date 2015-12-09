@@ -17,7 +17,7 @@ function hideAllTabs() {
 }
 
 function toggleDetails() {
-  var container = document.getElementById('pqp-container');
+  var container = document.getElementById('pQp');
 
   if (PQP_DETAILS) {
     addClassName(container, 'hideDetails', true);
@@ -29,7 +29,7 @@ function toggleDetails() {
 }
 
 function toggleHeight() {
-  var container = document.getElementById('pqp-container');
+  var container = document.getElementById('pQp');
 
   if (PQP_HEIGHT == "short") {
     addClassName(container, 'tallDetails', true);
@@ -76,5 +76,5 @@ function removeClassName(objElement, strClass) {
 }
 
 setTimeout(function () {
-  document.getElementById("pqp-container").style.display = "block";
+  document.getElementById("pQp").style.display = "block";
 }, 100);

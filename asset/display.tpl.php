@@ -1,29 +1,27 @@
-<div id="pqp-container" class="pQp" style="display:none">
-  <div id="pQp" class="console">
-    <table id="pqp-metrics" cellspacing="0">
-      <tr>
-        <td class="green" onclick="changeTab('console');">
-          <var><?php echo array_sum($output['console']['count']) ?></var>
-          <h4>Console</h4>
-        </td>
-        <td class="blue" onclick="changeTab('speed');">
-          <var><?php echo $output['speed']['elapsed'] ?></var>
-          <h4>Load Time</h4>
-        </td>
-        <td class="purple" onclick="changeTab('queries');">
-          <var><?php echo $output['queryTotals']['count'] ?> Queries</var>
-          <h4>Database</h4>
-        </td>
-        <td class="orange" onclick="changeTab('memory');">
-          <var><?php echo $output['memory']['used'] ?></var>
-          <h4>Memory Used</h4>
-        </td>
-        <td class="red" onclick="changeTab('files');">
-          <var><?php echo count($output['files']) ?> Files</var>
-          <h4>Included</h4>
-        </td>
-      </tr>
-    </table>
+<div id="pQp" class="console" style="display:none">
+  <div class="content">
+    <ul class="header">
+      <li class="console" onclick="changeTab('console');">
+        <h3 class="green"><?php echo array_sum($output['console']['count']) ?></h3>
+        <h4>Console</h4>
+      </li>
+      <li class="speed" onclick="changeTab('speed');"> 
+        <h3 class="blue"><?php echo $output['speed']['elapsed'] ?></h3>
+        <h4>Load Time</h4>
+      </li>
+      <li class="queries" onclick="changeTab('queries');">
+        <h3 class="purple"><?php echo $output['queryTotals']['count'] ?> Queries</h3>
+        <h4>Database</h4>
+      </li>
+      <li class="memory" onclick="changeTab('memory');">
+        <h3 class="orange"><?php echo $output['memory']['used'] ?></h3>
+        <h4>Memory Used</h4>
+      </li>
+      <li class="files" onclick="changeTab('files');">
+        <h3 class="red"><?php echo count($output['files']) ?> Files</h3>
+        <h4>Included</h4>
+      </li>
+    </ul>
 
     <div id="pqp-console" class="pqp-box">
     <?php if (count($output['console']) == 0): ?>
