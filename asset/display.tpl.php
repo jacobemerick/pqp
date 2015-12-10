@@ -27,7 +27,7 @@
     <?php if (empty($console['messages'])) : ?>
       <h3>This panel has no log items.</h3>
     <?php else : ?>
-      <ul class="meta">
+      <ul class="meta box">
         <li class="green-background">
           <h5><?php echo $console['meta']['log'] ?></h5>
           <h6>Logs</h6>
@@ -47,7 +47,7 @@
       </ul>
       <ul class="messages">
       <?php foreach ($console['messages'] as $message) : ?>
-        <li>
+        <li class="labeled">
           <span class="type <?php echo $message['type'] ?>">
             <h5><?php echo $message['type'] ?></h5>
           </span>

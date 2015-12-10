@@ -130,8 +130,10 @@
   width: 170px;
 }
 #pQp .meta li {
-  float: left;
   padding: 12px 0 15px;
+}
+#pQp .meta.box li {
+  float: left;
   width: 85px;
 }
 #pQp .meta h5 {
@@ -199,10 +201,13 @@
 #pQp .messages .message {
   color: #AAA;
   font-size: 11px;
-  margin: 0 50px 0 70px;
+  margin-right: 50px;
   padding: 7px 15px;
   text-align: left;
   white-space: pre-wrap;
+}
+#pQp .messages .labeled .message {
+  margin-left: 70px;
 }
 #pQp .messages .data {
   color: #FFFD70;
