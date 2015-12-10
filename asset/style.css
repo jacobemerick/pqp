@@ -30,11 +30,17 @@
 #pQp .blue-background {
   background: #3769A0;
 }
+#pQp .blue-dark-background {
+  background: #2B5481;
+}
 #pQp .green {
   color: #588E13;
 }
 #pQp .green-background {
   background: #588E13;
+}
+#pQp .green-dark-background {
+  background: #47740D;
 }
 #pQp .orange {
   color: #D28C00;
@@ -53,6 +59,9 @@
 }
 #pQp .red-background {
   background: #B72F09;
+}
+#pQp .red-dark-background {
+  background: #9B2700;
 }
 
 /* main container */
@@ -74,17 +83,22 @@
   width: 100%;
 }
 #pQp .header li {
-  border: 1px solid black;
-  border-bottom: 6px solid #444;
+  border: solid black;
+  border-bottom: solid #444;
   border-radius: 10px 10px 0 0;
+  border-width: 0 0 6px 1px;
+  box-sizing: border-box;
   cursor: pointer;
   float: left;
   padding: 20px 0 15px;
-  width: 190px;
+  width: 20%;
+}
+#pQp .header li:first-child {
+  border-left: none;
 }
 #pQp .header li:hover {
   background: #222;
-  border-bottom: 6px solid #777;
+  border-bottom-color: #777;
 }
 #pQp.console .header li.console,
 #pQp.speed .header li.speed,
@@ -99,8 +113,7 @@
   font-size: 23px;
   font-weight: bold;
 }
-#pQp .header h4 {
-  font-weight: bold;
+#pQp .header h4 { font-weight: bold;
 }
 #pQp .header:after {
   clear: both;
@@ -135,6 +148,7 @@
   box-shadow: -3px 0px 4px -1px rgba(0, 0, 0, 0.75);
   font-family: Monaco, "Consolas", "Lucida Console", "Courier New", monospace;
   margin-left: 170px;
+  min-height: 100%;
   position: relative;
 }
 #pQp .messages li {
@@ -148,6 +162,12 @@
 }
 #pQp .message li:nth-child(even) {
   background: #111;
+}
+#pQp .messages li:hover {
+  background: #2E2E2E;
+}
+#pQp .messages li:hover .message {
+  color: white;
 }
 #pQp .messages span {
   display: block;
@@ -183,10 +203,6 @@
   padding: 7px 15px;
   text-align: left;
   white-space: pre-wrap;
-}
-#pQp .messages .message:hover {
-  background: #2E2E2E;
-  color: white;
 }
 #pQp .messages .data {
   color: #FFFD70;

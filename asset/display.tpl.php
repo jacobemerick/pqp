@@ -62,37 +62,27 @@
     </div>
 
     <div id="pqp-speed" class="pqp-box">
-    <?php if ($output['console']['count']['speed'] == 0): ?>
+    <?php if (empty($speed['messages'])) : ?>
       <h3>This panel has no log items.</h3>
     <?php else: ?>
-      <table class="side" cellspacing="0">
-        <tr>
-          <td>
-            <var><?php echo $output['speed']['elapsed'] ?></var>
-            <h4>Load Time</h4>
-          </td>
-        </tr>
-        <tr>
-          <td class="alt">
-            <var><?php echo $output['speed']['allowed'] ?></var>
-            <h4>Max Execution Time</h4>
-          </td>
-        </tr>
-      </table>
-      <table class="main" cellspacing="0">
-      <?php foreach ($output['console']['messages'] as $log): ?>
-        <?php if ($log['type'] == 'speed'): ?>
-        <tr class="log-speed">
-          <td>
-            <div>
-              <pre><?php echo $log['data'] ?></pre>
-              <em><?php echo $log['name'] ?></em>
-            </div>
-          </td>
-        </tr>
-        <?php endif ?>
+      <ul class="meta">
+        <li class="blue-background">
+          <h5><?php echo $speed['meta']['elapsed'] ?></h5>
+          <h6>Load Time</h6>
+        </li>
+        <li class="blue-dark-background">
+          <h5><?php echo $speed['meta']['allowed'] ?></h5>
+          <h6>Max Execution Time</h6>
+        </li>
+      </ul>
+      <ul class="messages">
+      <?php foreach ($speed['messages'] as $message) : ?>
+        <li>
+          <span class="message"><?php echo $message['message'] ?></span>
+          <span class="data"><?php echo $message['data'] ?></span>
+        </li>
       <?php endforeach ?>
-      </table>
+      </ul>
     <?php endif ?>
     </div>
 

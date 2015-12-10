@@ -173,7 +173,7 @@ class Display
      */
     public function setSpeedData(array $data)
     {
-        $this->output['speed'] = array(
+        $this->output['speed']['meta'] = array(
             'elapsed' => self::getReadableTime($data['elapsed']),
             'allowed' => self::getReadableTime($data['allowed'], 0)
         );
@@ -223,13 +223,17 @@ class Display
         $output = $this->output;
         $header = array(
           'console' => count($output['console']['messages']),
-          'speed'   => $output['speed']['elapsed'],
+          'speed'   => $output['speed']['meta']['elapsed'],
           'query'   => $output['queryTotals']['count'],
           'memory'  => $output['memory']['used'],
           'files'   => count($output['files'])
         );
 
         $console = $output['console'];
+        $speed = $output['speed'];
+        $speed['messages'] = array_filter($console['messages'], function ($message) {
+            return $message['type'] == 'speed';
+        });
 
         // todo is this really the best way to load these?
         $styles = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");
