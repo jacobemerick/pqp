@@ -48,6 +48,9 @@
 #pQp .orange-background {
   background: #D28C00;
 }
+#pQp .orange-dark-background {
+  background: #AB7200;
+}
 #pQp .purple {
   color: #953FA1;
 }
@@ -127,7 +130,7 @@
   color: white;
   overflow: hidden;
   position: fixed;
-  width: 170px;
+  width: 200px;
 }
 #pQp .meta li {
   padding: 12px 0 15px;
@@ -149,7 +152,7 @@
 #pQp .messages {
   box-shadow: -3px 0px 4px -1px rgba(0, 0, 0, 0.75);
   font-family: Monaco, "Consolas", "Lucida Console", "Courier New", monospace;
-  margin-left: 170px;
+  margin-left: 200px;
   min-height: 100%;
   position: relative;
 }
