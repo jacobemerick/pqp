@@ -130,14 +130,14 @@
   color: white;
   overflow: hidden;
   position: fixed;
-  width: 200px;
+  width: 210px;
 }
 #pQp .meta li {
   padding: 12px 0 15px;
 }
 #pQp .meta.box li {
   float: left;
-  width: 85px;
+  width: 105px;
 }
 #pQp .meta h5 {
   font-size: 15px;
@@ -152,20 +152,21 @@
 #pQp .messages {
   box-shadow: -3px 0px 4px -1px rgba(0, 0, 0, 0.75);
   font-family: Monaco, "Consolas", "Lucida Console", "Courier New", monospace;
-  margin-left: 200px;
+  margin-left: 210px;
   min-height: 100%;
   position: relative;
 }
 #pQp .messages li {
+  background: black;
   border-top: 1px solid #333;
   clear; left;
   display: block;
   position: relative;
 }
-#pQp .message li:first-child {
+#pQp .messages li:first-child {
   border-top: none;
 }
-#pQp .message li:nth-child(even) {
+#pQp .messages li:nth-child(even) {
   background: #111;
 }
 #pQp .messages li:hover {
