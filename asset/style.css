@@ -3,6 +3,8 @@
  * Author : Designed by Kevin Hale.
  * URL : http://particletree.com/features/php-quick-profiler/
 *****************************************/
+
+/* global reset */
 #pQp {
   bottom: 0;
   color: #444;
@@ -16,12 +18,44 @@
   font-size: 100%;
   margin: 0;
   padding: 0;
-  vertical-align: baseline;
 }
 #pQp ul {
   list-style: none;
 }
 
+/* colors */
+#pQp .blue {
+  color: #3769A0;
+}
+#pQp .blue-background {
+  background: #3769A0;
+}
+#pQp .green {
+  color: #588E13;
+}
+#pQp .green-background {
+  background: #588E13;
+}
+#pQp .orange {
+  color: #D28C00;
+}
+#pQp .orange-background {
+  background: #D28C00;
+}
+#pQp .purple {
+  color: #953FA1;
+}
+#pQp .purple-background {
+  background: #953FA1;
+}
+#pQp .red {
+  color: #B72F09;
+}
+#pQp .red-background {
+  background: #B72F09;
+}
+
+/* main container */
 #pQp .content {
   background-color: #222;
   border: 12px solid black;
@@ -33,6 +67,7 @@
   width: 85%;
 }
 
+/* header */
 #pQp .header {
   background: black;
   text-align: center;
@@ -73,6 +108,99 @@
   display: block;
 }
 
+/* general interior */
+#pQp .meta {
+  border-bottom-left-radius: 20px;
+  color: white;
+  overflow: hidden;
+  position: fixed;
+  width: 170px;
+}
+#pQp .meta li {
+  float: left;
+  padding: 12px 0 15px;
+  width: 85px;
+}
+#pQp .meta h5 {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 3px;
+  text-shadow: #444 1px 1px 2px;
+}
+#pQp .meta h6 {
+  color: #F4FCCA;
+  font-size: 11px;
+}
+#pQp .messages {
+  box-shadow: -3px 0px 4px -1px rgba(0, 0, 0, 0.75);
+  font-family: Monaco, "Consolas", "Lucida Console", "Courier New", monospace;
+  margin-left: 170px;
+  position: relative;
+}
+#pQp .messages li {
+  border-top: 1px solid #333;
+  clear; left;
+  display: block;
+  position: relative;
+}
+#pQp .message li:first-child {
+  border-top: none;
+}
+#pQp .message li:nth-child(even) {
+  background: #111;
+}
+#pQp .messages span {
+  display: block;
+}
+#pQp .messages .type {
+  height: 100%;
+  position: absolute;
+  width: 70px;
+}
+#pQp .messages .type.error {
+  background: #9B2700;
+}
+#pQp .messages .type.log {
+  background: #47740D;
+}
+#pQp .messages .type.memory {
+  background: #D28C00;
+}
+#pQp .messages .type.speed {
+  background: #2B5481;
+}
+#pQp .messages .type h5 {
+  color: #F4FCCA;
+  font-size: 9px;
+  text-transform: uppercase;
+  padding-top: 5px;
+  text-transform: uppercase;
+}
+#pQp .messages .message {
+  color: #AAA;
+  font-size: 11px;
+  margin: 0 50px 0 70px;
+  padding: 7px 15px;
+  text-align: left;
+  white-space: pre-wrap;
+}
+#pQp .messages .message:hover {
+  background: #2E2E2E;
+  color: white;
+}
+#pQp .messages .data {
+  color: #FFFD70;
+  font-size: 10px;
+  padding: 8px 10px;
+  position: absolute;
+  right: 0;
+  text-align: right;
+  top: 0;
+}
+
+
+
+
 #pQp .console, #pQp .speed, #pQp .queries, #pQp .memory, #pQp .files{
   display:block !important;
 }
@@ -90,14 +218,6 @@
   height:200px;
   overflow:auto;
 }
-
-/* ----- Colors ----- */
-
-#pQp .green{color:#588E13 !important;}
-#pQp .blue{color:#3769A0 !important;}
-#pQp .purple{color:#953FA1 !important;}
-#pQp .orange{color:#D28C00 !important;}
-#pQp .red{color:#B72F09 !important;}
 
 /* ----- Logic ----- */
 
@@ -241,28 +361,6 @@
 }
 
 /* ----- Console ----- */
-
-#pqp-console .side td{
-  padding:12px 0;
-}
-#pqp-console .side td.alt1{
-  background:#588E13;
-  width:51%;
-}
-#pqp-console .side td.alt2{
-  background-color:#B72F09;
-}
-#pqp-console .side td.alt3{
-  background:#D28C00;
-  border-bottom:1px solid #9C6800;
-  border-left:1px solid #9C6800;
-  -webkit-border-bottom-left-radius:30px;
-  -moz-border-radius-bottomleft:30px;
-}
-#pqp-console .side td.alt4{
-  background-color:#3769A0;
-  border-bottom:1px solid #274B74;
-}
 
 #pqp-console .main table{
   width:100%;

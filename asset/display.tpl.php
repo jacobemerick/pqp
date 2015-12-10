@@ -2,84 +2,62 @@
   <div class="content">
     <ul class="header">
       <li class="console" onclick="changeTab('console');">
-        <h3 class="green"><?php echo array_sum($output['console']['count']) ?></h3>
+        <h3 class="green"><?php echo $header['console'] ?></h3>
         <h4>Console</h4>
       </li>
       <li class="speed" onclick="changeTab('speed');"> 
-        <h3 class="blue"><?php echo $output['speed']['elapsed'] ?></h3>
+        <h3 class="blue"><?php echo $header['speed'] ?></h3>
         <h4>Load Time</h4>
       </li>
       <li class="queries" onclick="changeTab('queries');">
-        <h3 class="purple"><?php echo $output['queryTotals']['count'] ?> Queries</h3>
+        <h3 class="purple"><?php echo $header['query'] ?> Queries</h3>
         <h4>Database</h4>
       </li>
       <li class="memory" onclick="changeTab('memory');">
-        <h3 class="orange"><?php echo $output['memory']['used'] ?></h3>
+        <h3 class="orange"><?php echo $header['memory'] ?></h3>
         <h4>Memory Used</h4>
       </li>
       <li class="files" onclick="changeTab('files');">
-        <h3 class="red"><?php echo count($output['files']) ?> Files</h3>
+        <h3 class="red"><?php echo $header['files'] ?> Files</h3>
         <h4>Included</h4>
       </li>
     </ul>
 
     <div id="pqp-console" class="pqp-box">
-    <?php if (count($output['console']) == 0): ?>
+    <?php if (empty($console['messages'])) : ?>
       <h3>This panel has no log items.</h3>
-    <?php else: ?>
-      <table class="side" cellspacing="0">
-        <tr>
-          <td class="alt1">
-            <var><?php echo $output['console']['count']['log'] ?></var>
-            <h4>Logs</h4>
-          </td>
-          <td class="alt2">
-            <var><?php echo $output['console']['count']['error'] ?></var>
-            <h4>Errors</h4>
-          </td>
-        </tr>
-        <tr>
-          <td class="alt3">
-            <var><?php echo $output['console']['count']['memory'] ?></var>
-            <h4>Memory</h4>
-          </td>
-          <td class="alt4">
-            <var><?php echo $output['console']['count']['speed'] ?></var>
-            <h4>Speed</h4>
-          </td>
-        </tr>
-      </table>
-      <table class="main" cellspacing="0">
-      <?php foreach ($output['console']['messages'] as $log): ?>
-        <tr class="log-<?php echo $log['type'] ?>">
-          <td class="type"><?php echo $log['type'] ?></td>
-          <td>
-          <?php if ($log['type'] == 'log'): ?>
-            <div><pre><?php echo $log['data'] ?></pre></div>
-          <?php elseif ($log['type'] == 'memory'): ?>
-            <div>
-              <pre><?php echo $log['data'] ?></pre>
-              <?php if (!empty($log['data_type'])): ?>
-              <em><?php echo $log['data_type'] ?></em>
-              <?php endif; ?>
-              <?php echo $log['name'] ?>
-            </div>
-          <?php elseif ($log['type'] == 'speed'): ?>
-            <div>
-              <pre><?php echo $log['data'] ?></pre>
-              <em><?php echo $log['name'] ?></em>
-            </div>
-          <?php elseif ($log['type'] == 'error'): ?>
-            <div>
-              <em>Line <?php echo $log['line'] ?></em> :
-              <?php echo $log['data'] ?>
-              <pre><?php echo $log['file'] ?></pre>
-            </div>
+    <?php else : ?>
+      <ul class="meta">
+        <li class="green-background">
+          <h5><?php echo $console['meta']['log'] ?></h5>
+          <h6>Logs</h6>
+        </li>
+        <li class="red-background">
+          <h5><?php echo $console['meta']['error'] ?></h5>
+          <h6>Errors</h6>
+        </li>
+        <li class="orange-background">
+          <h5><?php echo $console['meta']['memory'] ?></h5>
+          <h6>Memory</h6>
+        </li>
+        <li class="blue-background">
+          <h5><?php echo $console['meta']['speed'] ?></h5>
+          <h6>Speed</h6>
+        </li>
+      </ul>
+      <ul class="messages">
+      <?php foreach ($console['messages'] as $message) : ?>
+        <li>
+          <span class="type <?php echo $message['type'] ?>">
+            <h5><?php echo $message['type'] ?></h5>
+          </span>
+          <span class="message"><?php echo $message['message'] ?></span>
+          <?php if ($message['data']) : ?>
+          <span class="data"><?php echo $message['data'] ?></span>
           <?php endif ?>
-          </td>
-        </tr>
+        </li>
       <?php endforeach ?>
-      </table>
+      </ul>
     <?php endif ?>
     </div>
 

@@ -39,7 +39,7 @@ class Display
     {
         $console_data = array(
             'messages' => array(),
-            'count'    => array(
+            'meta'    => array(
                 'log'    => 0,
                 'memory' => 0,
                 'error'  => 0,
@@ -50,46 +50,41 @@ class Display
             switch($log['type']) {
                 case 'log':
                     $message = array(
-                        'data' => print_r($log['data'], true),
-                        'type' => 'log'
+                        'message' => print_r($log['data'], true),
+                        'type'    => 'log'
                     );
-                    $console_data['count']['log']++;
+                    $console_data['meta']['log']++;
                     break;
                 case 'memory':
                     $message = array(
-                        'name' => $log['name'],
-                        'data' => self::getReadableMemory($log['data']),
-                        'type' => 'memory'
+                        'message' => (!empty($log['data_type']) ? "{$log['data_type']}: " : '') . $log['name'],
+                        'data'    => self::getReadableMemory($log['data']),
+                        'type'    => 'memory'
                     );
-                    if (!empty($log['data_type'])) {
-                        $message['data_type'] = $log['data_type'];
-                    }
-                    $console_data['count']['memory']++;
+                    $console_data['meta']['memory']++;
                     break;
                 case 'error':
                     $message = array(
-                        'data' => $log['data'],
-                        'file' => $log['file'],
-                        'line' => $log['line'],
-                        'type' => 'error'
+                        'message' => "Line {$log['line']}: {$log['data']} in {$log['file']}",
+                        'type'    => 'error'
                     );
-                    $console_data['count']['error']++;
+                    $console_data['meta']['error']++;
                     break;
                 case 'speed':
                     $elapsedTime = $log['data'] - $this->startTime;
                     $message = array(
-                        'name' => $log['name'],
-                        'data' => self::getReadableTime($elapsedTime),
-                        'type' => 'speed'
+                        'message' => $log['name'],
+                        'data'    => self::getReadableTime($elapsedTime),
+                        'type'    => 'speed'
                     );
-                    $console_data['count']['speed']++;
+                    $console_data['meta']['speed']++;
                     break;
                 default:
                     $message = array(
-                        'data' => "Unrecognized console log type: {$log['type']}",
-                        'type' => 'error'
+                        'message' => "Unrecognized console log type: {$log['type']}",
+                        'type'    => 'error'
                     );
-                    $console_data['count']['error']++;
+                    $console_data['meta']['error']++;
                     break;
             }
             array_push($console_data['messages'], $message);
@@ -226,6 +221,16 @@ class Display
     public function __invoke()
     {
         $output = $this->output;
+        $header = array(
+          'console' => count($output['console']['messages']),
+          'speed'   => $output['speed']['elapsed'],
+          'query'   => $output['queryTotals']['count'],
+          'memory'  => $output['memory']['used'],
+          'files'   => count($output['files'])
+        );
+
+        $console = $output['console'];
+
         // todo is this really the best way to load these?
         $styles = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");
         $script = file_get_contents(__DIR__ . "./../{$this->options['script_path']}");
