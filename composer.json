@@ -18,5 +18,10 @@
     "psr-4": {
       "Particletree\\Pqp\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Particletree\\Pqp\\": "tests/unit/"
+    }
   }
 }

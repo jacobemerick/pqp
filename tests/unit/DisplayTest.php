@@ -1,6 +1,8 @@
 <?php
 
-use Particletree\Pqp\Display;
+namespace Particletree\Pqp;
+
+use PHPUnit_Framework_TestCase;
 
 class DisplayTest extends PHPUnit_Framework_TestCase
 {

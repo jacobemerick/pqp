@@ -1,7 +1,8 @@
 <?php
 
-use Particletree\Pqp\Console;
-use Particletree\Pqp\PhpQuickProfiler;
+namespace Particletree\Pqp;
+
+use PHPUnit_Framework_Testcase;
 
 class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
 {

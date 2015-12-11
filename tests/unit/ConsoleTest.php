@@ -1,6 +1,10 @@
 <?php
 
-use Particletree\Pqp\Console;
+namespace Particletree\Pqp;
+
+use Exception;
+use PHPUnit_Framework_TestCase;
+use ReflectionClass;
 
 class ConsoleTest extends PHPUnit_Framework_TestCase
 {
