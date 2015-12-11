@@ -20,6 +20,7 @@
   margin: 0;
   padding: 0;
 }
+#pQp dl,
 #pQp ul {
   list-style: none;
   margin: 0;
@@ -59,6 +60,9 @@
 }
 #pQp .purple-background {
   background: #953FA1;
+}
+#pQp .purple-dark-background {
+  background: #7B3384;
 }
 #pQp .red {
   color: #B72F09;
@@ -129,6 +133,11 @@
 }
 
 /* general interior */
+#pQp .no-logs {
+  color: white;
+  font-size: 16px;
+  line-height: 200px;
+}
 #pQp .meta {
   border-bottom-left-radius: 20px;
   color: white;
@@ -166,6 +175,12 @@
   clear: left;
   display: block;
   position: relative;
+}
+#pQp .messages li:after {
+  clear: both;
+  content: ' ';
+  display: block;
+  visibility: hidden;
 }
 #pQp .messages li:first-child {
   border-top: none;
@@ -209,7 +224,7 @@
   color: #AAA;
   font-size: 11px;
   margin-right: 50px;
-  padding: 7px 15px;
+  padding: 7px 10px;
   text-align: left;
   white-space: pre-wrap;
 }
@@ -225,7 +240,40 @@
   text-align: right;
   top: 0;
 }
-
+#pQp .messages .sub-data {
+  color: #AAA;
+  font-size: 9px;
+  margin-top: -5px;
+  padding: 0 10px 7px;
+}
+#pQp .messages .sub-data:after {
+  clear: both;
+  content: ' ';
+  display: block;
+  visibility: hidden;
+}
+#pQp .messages .sub-data dt {
+  float: left;
+  padding-left: 5px;
+}
+#pQp .messages .sub-data dt:before {
+  content: '\b7\a0';
+}
+#pQp .messages .sub-data dt:first-child {
+  padding-left: 0;
+}
+#pQp .messages .sub-data dt:first-child:before {
+  content: '';
+}
+#pQp .messages .sub-data dt:after {
+  content: ':';
+}
+#pQp .messages .sub-data dd {
+  color: #CCC;
+  float: left;
+  margin: 0;
+  padding: 0 2px 0 5px;
+}
 
 
 

@@ -25,7 +25,7 @@
 
     <div id="pqp-console" class="pqp-box">
     <?php if (empty($console['messages'])) : ?>
-      <h3>This panel has no log items.</h3>
+      <p class="no-logs">This panel has no log items.</p>
     <?php else : ?>
       <ul class="meta box">
         <li class="green-background">
@@ -63,7 +63,7 @@
 
     <div id="pqp-speed" class="pqp-box">
     <?php if (empty($speed['messages'])) : ?>
-      <h3>This panel has no log items.</h3>
+      <p class="no-logs">This panel has no log items.</p>
     <?php else: ?>
       <ul class="meta">
         <li class="blue-background">
@@ -87,53 +87,43 @@
     </div>
 
     <div id="pqp-queries" class="pqp-box">
-    <?php if ($output['queryTotals']['count'] == 0): ?>
-      <h3>This panel has no log items.</h3>
-    <?php else: ?>
-      <table class="side" cellspacing="0">
-        <tr>
-          <td>
-            <var><?php echo $output['queryTotals']['count'] ?></var>
-            <h4>Total Queries</h4>
-          </td>
-        </tr>
-        <tr>
-          <td class="alt">
-            <var><?php echo $output['queryTotals']['time'] ?></var>
-            <h4>Total Time</h4>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <var>0</var>
-            <h4>Duplicates</h4>
-          </td>
-        </tr>
-      </table>
-      <table class="main" cellspacing="0">';
-      <?php foreach ($output['queries'] as $query): ?>
-        <tr>
-          <td>
-            <?php echo $query['sql'] ?>
-            <?php if ($query['explain']): ?>
-            <em>
-              Possible keys: <b><?php echo $query['explain']['possible_keys'] ?></b> &middot; 
-              Key Used: <b><?php echo $query['explain']['key'] ?></b> &middot; 
-              Type: <b><?php echo $query['explain']['type'] ?></b> &middot; 
-              Rows: <b><?php echo $query['explain']['rows'] ?></b> &middot; 
-              Speed: <b><?php echo $query['time'] ?></b>
-            </em>
-            <?php endif ?>
-          </td>
-        </tr>
+    <?php if (empty($query['messages'])) : ?>
+      <p class="no-logs">This panel has no log items.</p>
+    <?php else : ?>
+      <ul class="meta">
+        <li class="purple-background">
+          <h5><?php echo $query['meta']['count'] ?></h5>
+          <h6>Total Queries</h6>
+        </li>
+        <li class="purple-dark-background">
+          <h5><?php echo $query['meta']['time'] ?></h5>
+          <h6>Total Time</h6>
+        </li>
+        <li class="purple-background">
+          <h5><?php echo $query['meta']['slowest'] ?></h5>
+          <h6>Slowest Query</h6>
+        </li>
+      </ul>
+      <ul class="messages">
+      <?php foreach ($query['messages'] as $message) : ?>
+        <li>
+          <span class="message"><?php echo $message['message'] ?></span>
+          <span class="data"><?php echo $message['data'] ?></span>
+          <dl class="sub-data">
+          <?php foreach ($message['sub_data'] as $key => $value) : ?>
+            <dt><?php echo $key ?></dt>
+            <dd><?php echo $value ?></dd>
+          <?php endforeach ?>
+          </dl>
+        </li>
       <?php endforeach ?>
-      </table>
+      </ul>
     <?php endif ?>
     </div>
 
     <div id="pqp-memory" class="pqp-box">
     <?php if ($output['console']['count']['memory'] == 0): ?>
-      <h3>This panel has no log items.</h3>
+      <p class="no-logs">This panel has no log items.</p>
     <?php else: ?>
       <table class="side" cellspacing="0">
         <tr>
@@ -169,7 +159,7 @@
 
     <div id="pqp-files" class="pqp-box">
     <?php if ($output['fileTotals']['count'] == 0): ?>
-      <h3>This panel has no log items.</h3>
+      <p class="no-logs">This panel has no log items.</p>
     <?php else: ?>
       <table class="side" cellspacing="0">
         <tr>

@@ -143,27 +143,30 @@ class Display
     public function setQueryData(array $data)
     {
         $queryData = array(
-            'queries'     => array(),
-            'queryTotals' => array(
+            'messages' => array(),
+            'meta'     => array(
                 'count'   => count($data),
                 'time'    => 0,
+                'slowest' => 0
             )
         );
 
         foreach ($data as $query) {
-            array_push($queryData['queries'], array(
-                'sql'     => $query['sql'],
-                'explain' => $query['explain'],
-                'time'    => self::getReadableTime($query['time'])
+            array_push($queryData['messages'], array(
+                'message'  => $query['sql'],
+                'sub_data' => array_filter($query['explain']),
+                'data'     => self::getReadableTime($query['time'])
             ));
-
-            $queryData['queryTotals']['time'] += $query['time'];
+            $queryData['meta']['time'] += $query['time'];
+            if ($query['time'] > $queryData['meta']['slowest']) {
+                $queryData['meta']['slowest'] = $query['time'];
+            }
         }
 
-        $queryData['queryTotals']['time'] = self::getReadableTime($queryData['queryTotals']['time']);
+        $queryData['meta']['time'] = self::getReadableTime($queryData['meta']['time']);
+        $queryData['meta']['slowest'] = self::getReadableTime($queryData['meta']['slowest']);
 
-        $this->output['queries'] = $queryData['queries'];
-        $this->output['queryTotals'] = $queryData['queryTotals'];
+        $this->output['query'] = $queryData;
     }
 
     /**
@@ -224,16 +227,19 @@ class Display
         $header = array(
           'console' => count($output['console']['messages']),
           'speed'   => $output['speed']['meta']['elapsed'],
-          'query'   => $output['queryTotals']['count'],
+          'query'   => $output['query']['meta']['count'],
           'memory'  => $output['memory']['used'],
           'files'   => count($output['files'])
         );
 
         $console = $output['console'];
+
         $speed = $output['speed'];
         $speed['messages'] = array_filter($console['messages'], function ($message) {
             return $message['type'] == 'speed';
         });
+
+        $query = $output['query'];
 
         // todo is this really the best way to load these?
         $styles = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");
