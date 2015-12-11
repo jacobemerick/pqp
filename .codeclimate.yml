@@ -1,0 +1,8 @@
+engines:
+  csslint:
+    enabled: true
+    checks:
+      box-sizing:
+        enabled: false
+      universal-selector:
+        enabled: false
