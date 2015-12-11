@@ -6,3 +6,16 @@ engines:
         enabled: false
       universal-selector:
         enabled: false
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  phpcodesniffer:
+    enabled: true
+  phpmd:
+    enabled: true
+ratings:
+  paths:
+  - src/*
+  - asset/*
+  - tests/*
