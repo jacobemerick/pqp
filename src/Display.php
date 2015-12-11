@@ -100,8 +100,8 @@ class Display
     public function setFileData(array $data)
     {
         $fileData = array(
-            'fileList'   => array(),
-            'fileTotals' => array(
+            'messages' => array(),
+            'meta'     => array(
                 'count'   => count($data),
                 'size'    => 0,
                 'largest' => 0
@@ -109,22 +109,21 @@ class Display
         );
 
         foreach ($data as $file) {
-            array_push($fileData['fileList'], array(
-                'name' => $file['name'],
-                'size' => self::getReadableMemory($file['size'])
+            array_push($fileData['messages'], array(
+                'message' => $file['name'],
+                'data'    => self::getReadableMemory($file['size'])
             ));
 
-            $fileData['fileTotals']['size'] += $file['size'];
-            if ($file['size'] > $fileData['fileTotals']['largest']) {
-                $fileData['fileTotals']['largest'] = $file['size'];
+            $fileData['meta']['size'] += $file['size'];
+            if ($file['size'] > $fileData['meta']['largest']) {
+                $fileData['meta']['largest'] = $file['size'];
             }
         }
 
-        $fileData['fileTotals']['size'] = self::getReadableMemory($fileData['fileTotals']['size']);
-        $fileData['fileTotals']['largest'] = self::getReadableMemory($fileData['fileTotals']['largest']);
+        $fileData['meta']['size'] = self::getReadableMemory($fileData['meta']['size']);
+        $fileData['meta']['largest'] = self::getReadableMemory($fileData['meta']['largest']);
 
-        $this->output['files'] = $fileData['fileList'];
-        $this->output['fileTotals'] = $fileData['fileTotals'];
+        $this->output['files'] = $fileData;
     }
 
     /**
@@ -134,7 +133,7 @@ class Display
      */
     public function setMemoryData(array $data)
     {
-        $this->output['memory'] = array(
+        $this->output['memory']['meta'] = array(
             'used'    => self::getReadableMemory($data['used']),
             'allowed' => $data['allowed']
         );
@@ -228,8 +227,8 @@ class Display
           'console' => count($output['console']['messages']),
           'speed'   => $output['speed']['meta']['elapsed'],
           'query'   => $output['query']['meta']['count'],
-          'memory'  => $output['memory']['used'],
-          'files'   => count($output['files'])
+          'memory'  => $output['memory']['meta']['used'],
+          'files'   => $output['files']['meta']['count']
         );
 
         $console = $output['console'];
@@ -240,6 +239,13 @@ class Display
         });
 
         $query = $output['query'];
+
+        $memory = $output['memory'];
+        $memory['messages'] = array_filter($console['messages'], function ($message) {
+            return $message['type'] == 'memory';
+        });
+
+        $files = $output['files'];
 
         // todo is this really the best way to load these?
         $styles = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");

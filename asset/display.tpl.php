@@ -122,75 +122,56 @@
     </div>
 
     <div id="pqp-memory" class="pqp-box">
-    <?php if ($output['console']['count']['memory'] == 0): ?>
+    <?php if (empty($memory['messages'])) : ?>
       <p class="no-logs">This panel has no log items.</p>
-    <?php else: ?>
-      <table class="side" cellspacing="0">
-        <tr>
-          <td>
-            <var><?php echo $output['memory']['used'] ?></var>
-            <h4>Used Memory</h4>
-          </td>
-        </tr>
-        <tr>
-          <td class="alt">
-            <var><?php echo $output['memory']['allowed'] ?></var>
-            <h4>Total Available</h4>
-          </td>
-        </tr>
-      </table>
-      <table class="main" cellspacing="0">';
-      <?php foreach ($output['console']['messages'] as $log): ?>
-        <?php if ($log['type'] == 'memory'): ?>
-        <tr class="log-memory">
-          <td>
-            <b><?php echo $log['data'] ?></b>
-            <?php if ($log['data_type']) : ?>
-            <em><?php echo $log['data_type'] ?></em>:
-            <?php endif ?>
-            <?php echo $log['name'] ?>
-          </td>
-        </tr>
-        <?php endif ?>
+    <?php else : ?>
+      <ul class="meta">
+        <li class="orange-background">
+          <h5><?php echo $memory['meta']['used'] ?></h5>
+          <h6>Used Memory</h6>
+        </li>
+        <li class="orange-dark-background">
+          <h5><?php echo $memory['meta']['allowed'] ?></h5>
+          <h6>Total Available</h6>
+        </li>
+      </ul>
+      <ul class="messages">
+      <?php foreach ($memory['messages'] as $message) : ?>
+        <li>
+          <span class="message"><?php echo $message['message'] ?></span>
+          <span class="data"><?php echo $message['data'] ?></span>
+        </li>
       <?php endforeach ?>
-      </table>
+      </ul>
     <?php endif ?>
     </div>
 
     <div id="pqp-files" class="pqp-box">
-    <?php if ($output['fileTotals']['count'] == 0): ?>
+    <?php if (empty($files['messages'])) : ?>
       <p class="no-logs">This panel has no log items.</p>
     <?php else: ?>
-      <table class="side" cellspacing="0">
-        <tr>
-          <td>
-            <var><?php echo $output['fileTotals']['count'] ?></var>
-            <h4>Total Files</h4>
-          </td>
-        </tr>
-        <tr>
-          <td class="alt">
-            <var><?php echo $output['fileTotals']['size'] ?></var>
-            <h4>Total Size</h4>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <var><?php echo $output['fileTotals']['largest'] ?></var>
-            <h4>Largest</h4>
-          </td>
-        </tr>
-      </table>
-      <table class="main" cellspacing="0">
-      <?php foreach ($output['files'] as $file): ?>
-        <tr>
-          <td>
-            <b><?php echo $file['size'] ?></b>
-            <?php echo $file['name'] ?>
-          </td>
-        </tr>
+      <ul class="meta">
+        <li class="red-background">
+          <h5><?php echo $files['meta']['count'] ?></h5>
+          <h6>Total Files</h6>
+        </li>
+        <li class="red-dark-background">
+          <h5><?php echo $files['meta']['size'] ?></h5>
+          <h6>Total Size</h6>
+        </li>
+        <li class="red-background">
+          <h5><?php echo $files['meta']['largest'] ?></h5>
+          <h6>Largest</h6>
+        </li>
+      </ul>
+      <ul class="messages">
+      <?php foreach ($files['messages'] as $message) : ?>
+        <li>
+          <span class="message"><?php echo $message['message'] ?></span>
+          <span class="data"><?php echo $message['data'] ?></span>
+        </li>
       <?php endforeach ?>
-      </table>
+      </ul>
     <?php endif ?>
     </div>
 
