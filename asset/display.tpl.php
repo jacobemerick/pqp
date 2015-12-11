@@ -175,21 +175,23 @@
     <?php endif ?>
     </div>
 
-    <table id="pqp-footer" cellspacing="0">
-      <tr>
-        <td class="credit">
-          <a href="http://particletree.com" target="_blank">
-            <strong>PHP</strong>
-            <b class="green">Q</b><b class="blue">u</b><b class="purple">i</b><b class="orange">c</b><b class="red">k</b>
-            Profiler
-          </a>
-        </td>
-        <td class="actions">
-          <a href="#" onclick="toggleDetails();return false">Details</a>
-          <a class="heightToggle" href="#" onclick="toggleHeight();return false">Height</a>
-        </td>
-      </tr>
-    </table>
+    <div class="footer">
+      <h2 class="credit">
+        <a href="http://particletree.com" target="_blank">
+          <span class="php">PHP</span>
+          <span class="green">Q</span>
+          <span class="blue">u</span>
+          <span class="purple">i</span>
+          <span class="orange">c</span>
+          <span class="red">k</span>
+          <span class="profiler">Profiler</span>
+        </a>
+      </h2>
+      <ul class="actions">
+        <li><a class="heightToggle" href="#" onclick="toggleHeight();return false">Height</a></li>
+        <li><a href="#" onclick="toggleDetails();return false">Details</a></li>
+      </ul>
+    </div>
   </div>
 </div>
 
