@@ -198,8 +198,8 @@
         </a>
       </h2>
       <ul class="actions">
-        <li><a class="heightToggle" href="#" onclick="toggleHeight();return false">Height</a></li>
-        <li><a href="#" onclick="toggleDetails();return false">Details</a></li>
+        <li><a href="javascript:void(0);" id="toggle-height">Height</a></li>
+        <li><a href="javascript:void(0);" id="toggle-details">Details</a></li>
       </ul>
     </div>
   </div>
