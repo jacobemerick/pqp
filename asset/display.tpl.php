@@ -1,25 +1,35 @@
 <div id="pQp" class="console">
   <div class="content">
     <ul class="header">
-      <li id="tab-console" class="console"> 
-        <h3 class="green"><?php echo $header['console'] ?></h3>
-        <h4>Console</h4>
+      <li>
+        <a href="javascript:void(0);" id="tab-console">
+          <h3 class="green"><?php echo $header['console'] ?></h3>
+          <h4>Console</h4>
+        </a>
       </li>
-      <li id="tab-speed" class="speed"> 
-        <h3 class="blue"><?php echo $header['speed'] ?></h3>
-        <h4>Load Time</h4>
+      <li>
+        <a href="javascript:void(0);" id="tab-speed">
+          <h3 class="blue"><?php echo $header['speed'] ?></h3>
+          <h4>Load Time</h4>
+        </a>
       </li>
-      <li id="tab-queries" class="queries">
-        <h3 class="purple"><?php echo $header['query'] ?> Queries</h3>
-        <h4>Database</h4>
+      <li>
+        <a href="javascript:void(0);" id="tab-queries">
+          <h3 class="purple"><?php echo $header['query'] ?> Queries</h3>
+          <h4>Database</h4>
+        </a>
       </li>
-      <li id="tab-memory" class="memory">
-        <h3 class="orange"><?php echo $header['memory'] ?></h3>
-        <h4>Memory Used</h4>
+      <li>
+        <a href="javascript:void(0);" id="tab-memory">
+          <h3 class="orange"><?php echo $header['memory'] ?></h3>
+          <h4>Memory Used</h4>
+        </a>
       </li>
-      <li id="tab-files" class="files">
-        <h3 class="red"><?php echo $header['files'] ?> Files</h3>
-        <h4>Included</h4>
+      <li>
+        <a href="javascript:void(0);" id="tab-files">
+          <h3 class="red"><?php echo $header['files'] ?> Files</h3>
+          <h4>Included</h4>
+        </a>
       </li>
     </ul>
 
