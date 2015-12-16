@@ -42,16 +42,16 @@ class Console
     public function logMemory($object = null, $name = 'PHP')
     {
         $memory = memory_get_usage();
-        $data_type = '';
+        $dataType = '';
         if (!is_null($object)) {
             $memory = strlen(serialize($object));
-            $data_type = gettype($object);
+            $dataType = gettype($object);
         }
 
         array_push($this->store, array(
             'name'      => $name,
             'data'      => $memory,
-            'data_type' => $data_type,
+            'data_type' => $dataType,
             'type'      => 'memory'
         ));
     }
