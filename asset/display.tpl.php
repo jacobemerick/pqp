@@ -4,32 +4,32 @@
       <ul class="header">
         <li>
           <a href="javascript:void(0);" id="tab-console">
-            <h3 class="console"><?php echo $header['console'] ?></h3>
-            <h4>Console</h4>
+            <h3 class="metric console"><?php echo $header['console'] ?></h3>
+            <h4 class="description">Console</h4>
           </a>
         </li>
         <li>
           <a href="javascript:void(0);" id="tab-speed">
-            <h3 class="speed"><?php echo $header['speed'] ?></h3>
-            <h4>Load Time</h4>
+            <h3 class="metric speed"><?php echo $header['speed'] ?></h3>
+            <h4 class="description">Load Time</h4>
           </a>
         </li>
         <li>
           <a href="javascript:void(0);" id="tab-queries">
-            <h3 class="queries"><?php echo $header['query'] ?> Queries</h3>
-            <h4>Database</h4>
+            <h3 class="metric queries"><?php echo $header['query'] ?> Queries</h3>
+            <h4 class="description">Database</h4>
           </a>
         </li>
         <li>
           <a href="javascript:void(0);" id="tab-memory">
-            <h3 class="memory"><?php echo $header['memory'] ?></h3>
-            <h4>Memory Used</h4>
+            <h3 class="metric memory"><?php echo $header['memory'] ?></h3>
+            <h4 class="description">Memory Used</h4>
           </a>
         </li>
         <li>
           <a href="javascript:void(0);" id="tab-files">
-            <h3 class="files"><?php echo $header['files'] ?> Files</h3>
-            <h4>Included</h4>
+            <h3 class="metric files"><?php echo $header['files'] ?> Files</h3>
+            <h4 class="description">Included</h4>
           </a>
         </li>
       </ul>
@@ -40,27 +40,27 @@
       <?php else : ?>
         <ul class="meta box">
           <li class="console-background">
-            <h5><?php echo $console['meta']['log'] ?></h5>
-            <h6>Logs</h6>
+            <h5 class="metric" class="metric"><?php echo $console['meta']['log'] ?></h5>
+            <h6 class="description" class="description">Logs</h6>
           </li>
           <li class="files-background">
-            <h5><?php echo $console['meta']['error'] ?></h5>
-            <h6>Errors</h6>
+            <h5 class="metric" class="metric"><?php echo $console['meta']['error'] ?></h5>
+            <h6 class="description" class="description">Errors</h6>
           </li>
           <li class="memory-background">
-            <h5><?php echo $console['meta']['memory'] ?></h5>
-            <h6>Memory</h6>
+            <h5 class="metric" class="metric"><?php echo $console['meta']['memory'] ?></h5>
+            <h6 class="description" class="description">Memory</h6>
           </li>
           <li class="speed-background">
-            <h5><?php echo $console['meta']['speed'] ?></h5>
-            <h6>Speed</h6>
+            <h5 class="metric" class="metric"><?php echo $console['meta']['speed'] ?></h5>
+            <h6 class="description" class="description">Speed</h6>
           </li>
         </ul>
         <ul class="messages">
         <?php foreach ($console['messages'] as $message) : ?>
           <li class="labeled">
             <span class="type <?php echo $message['type'] ?>">
-              <h5><?php echo $message['type'] ?></h5>
+              <span class="inner"><?php echo $message['type'] ?></span>
             </span>
             <span class="message"><?php echo $message['message'] ?></span>
             <?php if ($message['data']) : ?>
@@ -78,12 +78,12 @@
       <?php else: ?>
         <ul class="meta">
           <li class="speed-background">
-            <h5><?php echo $speed['meta']['elapsed'] ?></h5>
-            <h6>Load Time</h6>
+            <h5 class="metric"><?php echo $speed['meta']['elapsed'] ?></h5>
+            <h6 class="description">Load Time</h6>
           </li>
           <li class="speed-alt-background">
-            <h5><?php echo $speed['meta']['allowed'] ?></h5>
-            <h6>Max Execution Time</h6>
+            <h5 class="metric"><?php echo $speed['meta']['allowed'] ?></h5>
+            <h6 class="description">Max Execution Time</h6>
           </li>
         </ul>
         <ul class="messages">
@@ -103,16 +103,16 @@
       <?php else : ?>
         <ul class="meta">
           <li class="queries-background">
-            <h5><?php echo $query['meta']['count'] ?></h5>
-            <h6>Total Queries</h6>
+            <h5 class="metric"><?php echo $query['meta']['count'] ?></h5>
+            <h6 class="description">Total Queries</h6>
           </li>
           <li class="queries-alt-background">
-            <h5><?php echo $query['meta']['time'] ?></h5>
-            <h6>Total Time</h6>
+            <h5 class="metric"><?php echo $query['meta']['time'] ?></h5>
+            <h6 class="description">Total Time</h6>
           </li>
           <li class="queries-background">
-            <h5><?php echo $query['meta']['slowest'] ?></h5>
-            <h6>Slowest Query</h6>
+            <h5 class="metric"><?php echo $query['meta']['slowest'] ?></h5>
+            <h6 class="description">Slowest Query</h6>
           </li>
         </ul>
         <ul class="messages">
@@ -138,12 +138,12 @@
       <?php else : ?>
         <ul class="meta">
           <li class="memory-background">
-            <h5><?php echo $memory['meta']['used'] ?></h5>
-            <h6>Used Memory</h6>
+            <h5 class="metric"><?php echo $memory['meta']['used'] ?></h5>
+            <h6 class="description">Used Memory</h6>
           </li>
           <li class="memory-alt-background">
-            <h5><?php echo $memory['meta']['allowed'] ?></h5>
-            <h6>Total Available</h6>
+            <h5 class="metric"><?php echo $memory['meta']['allowed'] ?></h5>
+            <h6 class="description">Total Available</h6>
           </li>
         </ul>
         <ul class="messages">
@@ -163,16 +163,16 @@
       <?php else: ?>
         <ul class="meta">
           <li class="files-background">
-            <h5><?php echo $files['meta']['count'] ?></h5>
-            <h6>Total Files</h6>
+            <h5 class="metric"><?php echo $files['meta']['count'] ?></h5>
+            <h6 class="description">Total Files</h6>
           </li>
           <li class="files-alt-background">
-            <h5><?php echo $files['meta']['size'] ?></h5>
-            <h6>Total Size</h6>
+            <h5 class="metric"><?php echo $files['meta']['size'] ?></h5>
+            <h6 class="description">Total Size</h6>
           </li>
           <li class="files-background">
-            <h5><?php echo $files['meta']['largest'] ?></h5>
-            <h6>Largest</h6>
+            <h5 class="metric"><?php echo $files['meta']['largest'] ?></h5>
+            <h6 class="description">Largest</h6>
           </li>
         </ul>
         <ul class="messages">

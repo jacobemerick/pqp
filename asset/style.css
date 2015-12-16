@@ -70,7 +70,7 @@
   background: #222;
   border-bottom: 6px solid white;
 }
-.pQp .header h3 {
+.pQp .header .metric {
   font-size: 23px;
   font-weight: bold;
 }
@@ -89,7 +89,7 @@
 .pQp .files {
   color: #B72F09;
 }
-.pQp .header h4 {
+.pQp .header .description {
   color: white;
   font-weight: bold;
 }
@@ -135,14 +135,14 @@
   float: left;
   width: 105px;
 }
-.pQp .meta h5 {
+.pQp .meta .metric {
   color: white;
   font-size: 15px;
   font-weight: bold;
   margin-bottom: 3px;
   text-shadow: #444 1px 1px 2px;
 }
-.pQp .meta h6 {
+.pQp .meta .description {
   color: #F4FCCA;
   font-size: 11px;
 }
@@ -228,10 +228,10 @@
 .pQp .messages .speed {
   background: #2B5481;
 }
-.pQp .messages .type h5 {
-  color: #F4FCCA;
+.pQp .messages .type .inner {
+  color: white;
   font-size: 9px;
-  padding-top: 5px;
+  padding-top: 8px;
   text-transform: uppercase;
 }
 .pQp .messages .message {
