@@ -23,53 +23,6 @@
   list-style: none;
 }
 
-/* colors */
-.pQp .blue {
-  color: #3769A0;
-}
-.pQp .blue-background {
-  background: #3769A0;
-}
-.pQp .blue-dark-background {
-  background: #2B5481;
-}
-.pQp .green {
-  color: #588E13;
-}
-.pQp .green-background {
-  background: #588E13;
-}
-.pQp .green-dark-background {
-  background: #47740D;
-}
-.pQp .orange {
-  color: #D28C00;
-}
-.pQp .orange-background {
-  background: #D28C00;
-}
-.pQp .orange-dark-background {
-  background: #AB7200;
-}
-.pQp .purple {
-  color: #953FA1;
-}
-.pQp .purple-background {
-  background: #953FA1;
-}
-.pQp .purple-dark-background {
-  background: #7B3384;
-}
-.pQp .red {
-  color: #B72F09;
-}
-.pQp .red-background {
-  background: #B72F09;
-}
-.pQp .red-dark-background {
-  background: #9B2700;
-}
-
 /* main container */
 .pQp .content {
   background-color: #111;
@@ -118,6 +71,21 @@
 .pQp .header h3 {
   font-size: 23px;
   font-weight: bold;
+}
+.pQp .console {
+  color: #588E13;
+}
+.pQp .speed {
+  color: #3769A0;
+}
+.pQp .queries {
+  color: #953FA1;
+}
+.pQp .memory {
+  color: #D28C00;
+}
+.pQp .files {
+  color: #B72F09;
 }
 .pQp .header h4 {
   color: white;
@@ -177,6 +145,36 @@
   color: #F4FCCA;
   font-size: 11px;
 }
+.pQp .meta .console-background {
+  background: #588E13;
+}
+.pQp .meta .console-alt-background {
+  background: #47740D;
+}
+.pQp .meta .speed-background {
+  background: #3769A0;
+}
+.pQp .meta .speed-alt-background {
+  background: #2B5481;
+}
+.pQp .meta .queries-background {
+  background: #953FA1;
+}
+.pQp .meta .queries-alt-background {
+  background: #7B3384;
+}
+.pQp .meta .memory-background {
+  background: #D28C00;
+}
+.pQp .meta .memory-alt-background {
+  background: #AB7200;
+}
+.pQp .meta .files-background {
+  background: #B72F09;
+}
+.pQp .meta .files-alt-background {
+  background: #9B2700;
+}
 .pQp .messages {
   box-shadow: -3px 0 4px -1px rgba(0, 0, 0, 0.75);
   font-family: Monaco, "Consolas", "Lucida Console", "Courier New", monospace;
@@ -217,16 +215,16 @@
   position: absolute;
   width: 70px;
 }
-.pQp .messages .type.error {
+.pQp .messages .error {
   background: #9B2700;
 }
-.pQp .messages .type.log {
+.pQp .messages .log {
   background: #47740D;
 }
-.pQp .messages .type.memory {
+.pQp .messages .memory {
   background: #D28C00;
 }
-.pQp .messages .type.speed {
+.pQp .messages .speed {
   background: #2B5481;
 }
 .pQp .messages .type h5 {
