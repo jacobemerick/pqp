@@ -1,4 +1,4 @@
-<div id="pQp" class="console">
+<div id="pQp" class="pQp">
   <div class="content">
     <ul class="header">
       <li>
