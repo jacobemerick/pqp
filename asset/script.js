@@ -24,15 +24,15 @@
 
       this.classList.add('selected');
       if (this.id == 'tab-console') {
-        panes.console.classList.add('active');
+        panes.console.classList.add('active-box');
       } else if (this.id == 'tab-speed') {
-        panes.speed.classList.add('active');
+        panes.speed.classList.add('active-box');
       } else if (this.id == 'tab-queries') {
-        panes.queries.classList.add('active');
+        panes.queries.classList.add('active-box');
       } else if (this.id == 'tab-memory') {
-        panes.memory.classList.add('active');
+        panes.memory.classList.add('active-box');
       } else if (this.id == 'tab-files') {
-        panes.files.classList.add('active');
+        panes.files.classList.add('active-box');
       }
     });
   }
@@ -45,7 +45,7 @@
 
   function clearPanes() {
     for (key in panes) {
-      panes[key].classList.remove('active');
+      panes[key].classList.remove('active-box');
     }
   }
 
