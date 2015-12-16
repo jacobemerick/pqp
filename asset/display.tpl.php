@@ -34,13 +34,9 @@
     </ul>
 
     <div id="content-console" class="pqp-box">
-<?php
-  if (empty($console['messages'])) :
-?>
+    <?php if (empty($console['messages'])) : ?>
       <p class="no-logs">This panel has no log items.</p>
-<?php
-  else :
-?>
+    <?php else : ?>
       <ul class="meta box">
         <li class="green-background">
           <h5><?php echo $console['meta']['log'] ?></h5>
@@ -60,29 +56,19 @@
         </li>
       </ul>
       <ul class="messages">
-<?php
-  foreach ($console['messages'] as $message) :
-?>
+      <?php foreach ($console['messages'] as $message) : ?>
         <li class="labeled">
           <span class="type <?php echo $message['type'] ?>">
             <h5><?php echo $message['type'] ?></h5>
           </span>
           <span class="message"><?php echo $message['message'] ?></span>
-<?php
-  if ($message['data']) :
-?>
+          <?php if ($message['data']) : ?>
           <span class="data"><?php echo $message['data'] ?></span>
-<?php
-  endif
-?>
+          <?php endif ?>
         </li>
-<?php
-  endforeach
-?>
+      <?php endforeach ?>
       </ul>
-<?php
-  endif
-?>
+    <?php endif ?>
     </div>
 
     <div id="content-speed" class="pqp-box">
