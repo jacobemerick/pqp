@@ -16,8 +16,8 @@ engines:
     enabled: true
 ratings:
   paths:
-  - src/*
-  - asset/*
-  - tests/*
+  - src/**
+  - asset/**
+  - tests/**
 exclude_paths:
 - "asset/display.tpl.php"
