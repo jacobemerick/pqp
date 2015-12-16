@@ -19,5 +19,3 @@ ratings:
   - src/**
   - asset/**
   - tests/**
-exclude_paths:
-- "asset/display.tpl.php"

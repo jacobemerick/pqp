@@ -251,6 +251,6 @@ class Display
         $styles = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");
         $script = file_get_contents(__DIR__ . "./../{$this->options['script_path']}");
 
-        require_once __DIR__ .'/../asset/display.tpl.php';
+        require_once __DIR__ .'/../asset/display.html';
     }
 }	
