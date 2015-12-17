@@ -98,16 +98,13 @@ class PhpQuickProfiler
     /**
      * Get data about sql usage of the application
      *
-     * @param object $db
+     * @param object $dbConnection
      * @returns array
      */
-    public function gatherQueryData($db)
+    public function gatherQueryData($dbConnection)
     {
-        if (
-            empty($this->profiledQueries) &&
-            property_exists($db, 'queries')
-        ) {
-            $this->setProfiledQueries($db->queries);
+        if (empty($this->profiledQueries) && property_exists($dbConnection, 'queries')) {
+            $this->setProfiledQueries($dbConnection->queries);
         }
 
         $data = array();
@@ -136,7 +133,7 @@ class PhpQuickProfiler
     {
         $query = "EXPLAIN {$query}";
         try {
-            $statement = $this->db->prepare($query);
+            $statement = $this->dbConnection->prepare($query);
             $statement->execute($parameters);
             return $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
@@ -163,9 +160,9 @@ class PhpQuickProfiler
     /**
      * Triggers end display of the profiling data
      *
-     * @param object $db
+     * @param object $dbConnection
      */
-    public function display($db = null)
+    public function display($dbConnection = null)
     {
         if (!isset($this->display)) {
             throw new Exception('Display object has not been injected into Profiler');
@@ -174,9 +171,9 @@ class PhpQuickProfiler
         $this->display->setConsole($this->console);
         $this->display->setFileData($this->gatherFileData());
         $this->display->setMemoryData($this->gatherMemoryData());
-        $this->display->setQueryData($this->gatherQueryData($db));
+        $this->display->setQueryData($this->gatherQueryData($dbConnection));
         $this->display->setSpeedData($this->gatherSpeedData());
 
-        $display();
+        $this->display();
     }
 }
