@@ -25,6 +25,21 @@ function filesize($filename)
     return strlen($filename) * 100;
 }
 
+// namespace hack on memory usage
+function memory_get_peak_usage()
+{
+    return 123456789;
+}
+
+// namespace hack on ini settings
+function ini_get($setting)
+{
+    if ($setting == 'memory_limit') {
+        return '128M';
+    }
+    return \ini_get($setting);
+}
+
 class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
 {
 
@@ -69,6 +84,19 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
             $this->assertArrayHasKey('size', $fileData);
             $this->assertEquals($fileData['size'], filesize($fileData['name']));
         }
+    }
+
+    public function testGatherMemoryData()
+    {
+        $memory_usage = memory_get_peak_usage();
+        $allowed_limit = ini_get('memory_limit');
+        $profiler = new PhpQuickProfiler();
+        $gatheredMemoryData = $profiler->gatherMemoryData();
+
+        $this->assertArrayHasKey('used', $gatheredMemoryData);
+        $this->assertEquals($memory_usage, $gatheredMemoryData['used']);
+        $this->assertArrayHasKey('allowed', $gatheredMemoryData);
+        $this->assertEquals($allowed_limit, $gatheredMemoryData['allowed']);
     }
 
     public function testSetProfiledQueries()

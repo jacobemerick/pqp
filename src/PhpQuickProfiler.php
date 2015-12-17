@@ -12,6 +12,8 @@
 
 namespace Particletree\Pqp;
 
+use Exception;
+
 class PhpQuickProfiler
 {
 
@@ -115,7 +117,7 @@ class PhpQuickProfiler
 
             array_push($data, array(
                 'sql'     => $query['statement'],
-                'explain' => $this->explainQuery($query['statement'], $query['bind_values']),
+                'explain' => $this->explainQuery($dbConnection, $query['statement'], $query['bind_values']),
                 'time'    => $query['duration']
             ));
         }
@@ -125,18 +127,19 @@ class PhpQuickProfiler
     /**
      * Attempts to explain a query
      *
+     * @param object $dbConnection
      * @param string $query
      * @param array  $parameters
      * @return array
      */
-    protected function explainQuery($query, $parameters)
+    protected function explainQuery($dbConnection, $query, $parameters)
     {
         $query = "EXPLAIN {$query}";
         try {
-            $statement = $this->dbConnection->prepare($query);
+            $statement = $dbConnection->prepare($query);
             $statement->execute($parameters);
             return $statement->fetch(\PDO::FETCH_ASSOC);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             echo $e->getMessage();
         }
         return '';
@@ -174,6 +177,6 @@ class PhpQuickProfiler
         $this->display->setQueryData($this->gatherQueryData($dbConnection));
         $this->display->setSpeedData($this->gatherSpeedData());
 
-        $this->display();
+        $this->display->__invoke();
     }
 }
