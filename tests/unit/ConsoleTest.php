@@ -9,10 +9,6 @@ use ReflectionClass;
 class ConsoleTest extends PHPUnit_Framework_TestCase
 {
 
-    public function __construct()
-    {
-    }
-
     public function testLog()
     {
         $data = array(

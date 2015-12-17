@@ -15,29 +15,43 @@ namespace Particletree\Pqp;
 class PhpQuickProfiler
 {
 
-    /** @var  Console */
-    protected $console;
-
     /** @var  integer */
     protected $startTime;
 
-    /** @var  object */
-    protected $pdo;
+    /** @var  Console */
+    protected $console;
+
+    /** @var  Display */
+    protected $display;
+
+    /** @var  array */
+    protected $profiledQueries = array();
 
     /**
-     * @param Console $console
-     * @param object  $pdo
      * @param integer $startTime
      */
-    public function __construct(Console $console, $pdo = null, $startTime = null)
+    public function __construct($startTime = null)
     {
-        $this->console = $console;
-        $this->pdo = $pdo;
-
         if (is_null($startTime)) {
             $startTime = microtime(true);
         }
         $this->startTime = $startTime;
+    }
+
+    /**
+     * @param Console $console
+     */
+    public function setConsole(Console $console)
+    {
+        $this->console = $console;
+    }
+
+    /**
+     * @param Display $display
+     */
+    public function setDisplay(Display $display)
+    {
+        $this->display = $display;
     }
 
     /**
@@ -74,15 +88,30 @@ class PhpQuickProfiler
     }
 
     /**
+     * @param array $profiled_queries
+     */
+    public function setProfiledQueries(array $profiledQueries)
+    {
+        $this->profiledQueries = $profiledQueries;
+    }
+
+    /**
      * Get data about sql usage of the application
      *
-     * @param array $profiledQueries
+     * @param object $db
      * @returns array
      */
-    public function gatherQueryData(array $profiledQueries)
+    public function gatherQueryData($db)
     {
+        if (
+            empty($this->profiledQueries) &&
+            property_exists($db, 'queries')
+        ) {
+            $this->setProfiledQueries($db->queries);
+        }
+
         $data = array();
-        foreach ($profiledQueries as $query) {
+        foreach ($this->profiledQueries as $query) {
             if ($query['function'] !== 'perform') {
                 continue;
             }
@@ -107,7 +136,7 @@ class PhpQuickProfiler
     {
         $query = "EXPLAIN {$query}";
         try {
-            $statement = $this->pdo->prepare($query);
+            $statement = $this->db->prepare($query);
             $statement->execute($parameters);
             return $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (\Exception $e) {
@@ -134,16 +163,19 @@ class PhpQuickProfiler
     /**
      * Triggers end display of the profiling data
      *
-     * @param Display $display
-     * @param array   $profiledQueries
+     * @param object $db
      */
-    public function display(Display $display, array $profiledQueries = array())
+    public function display($db = null)
     {
-        $display->setConsole($this->console);
-        $display->setFileData($this->gatherFileData());
-        $display->setMemoryData($this->gatherMemoryData());
-        $display->setQueryData($this->gatherQueryData($profiledQueries));
-        $display->setSpeedData($this->gatherSpeedData());
+        if (!isset($this->display)) {
+            throw new Exception('Display object has not been injected into Profiler');
+        }
+
+        $this->display->setConsole($this->console);
+        $this->display->setFileData($this->gatherFileData());
+        $this->display->setMemoryData($this->gatherMemoryData());
+        $this->display->setQueryData($this->gatherQueryData($db));
+        $this->display->setSpeedData($this->gatherSpeedData());
 
         $display();
     }
