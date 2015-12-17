@@ -5,15 +5,14 @@ namespace Particletree\Pqp;
 use PHPUnit_Framework_Testcase;
 
 // namespace hack on microtime functionality
-function microtime($get_as_float = false) {
-    if ($get_as_float) {
-      return 1450355136.5706;
-    }
-    return '1450355136 5706';
+function microtime()
+{
+    return 1450355136.5706;
 }
 
 // namespace hack on included files functionality
-function get_included_files() {
+function get_included_files()
+{
     return array(
       'index.php',
       'src/Class.php'
@@ -21,8 +20,9 @@ function get_included_files() {
 }
 
 // namespace hack on filesize
-function filesize($filename) {
-    return 100;
+function filesize($filename)
+{
+    return strlen($filename) * 100;
 }
 
 class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
@@ -60,7 +60,6 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
     public function testGatherFileData()
     {
         $files = get_included_files();
-        $fileSize = filesize('');
         $profiler = new PhpQuickProfiler();
         $gatheredFileData = $profiler->gatherFileData();
 
@@ -68,7 +67,7 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
             $this->assertArrayHasKey('name', $fileData);
             $this->assertContains($fileData['name'], $files);
             $this->assertArrayHasKey('size', $fileData);
-            $this->assertEquals($fileData['size'], $fileSize);
+            $this->assertEquals($fileData['size'], filesize($fileData['name']));
         }
     }
 
