@@ -2,48 +2,35 @@
 
 namespace Particletree\Pqp;
 
+use PDO;
 use PHPUnit_Framework_Testcase;
-
-// namespace hack on microtime functionality
-function microtime()
-{
-    return 1450355136.5706;
-}
-
-// namespace hack on included files functionality
-function get_included_files()
-{
-    return array(
-      'index.php',
-      'src/Class.php'
-    );
-}
-
-// namespace hack on filesize
-function filesize($filename)
-{
-    return strlen($filename) * 100;
-}
-
-// namespace hack on memory usage
-function memory_get_peak_usage()
-{
-    return 123456789;
-}
-
-// namespace hack on ini settings
-function ini_get($setting)
-{
-    if ($setting == 'memory_limit') {
-        return '128M';
-    } elseif ($setting == 'max_execution_time') {
-        return '30';
-    }
-    return \ini_get($setting);
-}
+use ReflectionClass;
+use ReflectionMethod;
 
 class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
 {
+
+    protected static $dbConnection;
+
+    public static function setUpBeforeClass()
+    {
+        self::$dbConnection = new PDO('sqlite::memory:');
+        self::$dbConnection->exec("
+            CREATE TABLE IF NOT EXISTS `testing` (
+                `id` integer PRIMARY KEY AUTOINCREMENT,
+                `title` varchar(60) NOT NULL
+            );"
+        );
+        self::$dbConnection->exec("
+            INSERT INTO `testing`
+                (`title`)
+            VALUES
+                ('alpha'),
+                ('beta'),
+                ('charlie'),
+                ('delta');"
+        );
+    }
 
     public function testConstruct()
     {
@@ -108,14 +95,93 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
 
     public function testSetProfiledQueries()
     {
-        $profiledQueries = array(
-            'sql' => 'SELECT * FROM example',
-            'time' => 25
-        );
+        $profiledQueries = $this->dataProfiledQueries();
         $profiler = new PhpQuickProfiler();
         $profiler->setProfiledQueries($profiledQueries);
 
         $this->assertAttributeEquals($profiledQueries, 'profiledQueries', $profiler);
+    }
+
+    /**
+     * @dataProvider dataProfiledQueries
+     */
+    public function testExplainQuery($sql, $parameters)
+    {
+        $profiler = new PhpQuickProfiler();
+        $reflectedMethod = $this->getAccessibleMethod($profiler, 'explainQuery');
+
+        $explainedQuery = $reflectedMethod->invokeArgs(
+            $profiler,
+            array(self::$dbConnection, $sql, $parameters)
+        );
+        $this->assertInternalType('array', $explainedQuery);
+        $this->assertGreaterThan(0, count($explainedQuery));
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testExplainQueryBadQueryException()
+    {
+        $invalidQuery = 'SELECT * FROM `fake_table`';
+        $profiler = new PhpQuickProfiler();
+        $reflectedMethod = $this->getAccessibleMethod($profiler, 'explainQuery');
+
+        $explainedQuery = $reflectedMethod->invokeArgs(
+            $profiler,
+            array(self::$dbConnection, $invalidQuery)
+        );
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testExplainQueryBadParametersException()
+    {
+        $query = 'SELECT * FROM `testing` WHERE `title` = :title';
+        $invalidParams = array('id' => 1);
+        $profiler = new PhpQuickProfiler();
+        $reflectedMethod = $this->getAccessibleMethod($profiler, 'explainQuery');
+
+        $explainedQuery = $reflectedMethod->invokeArgs(
+            $profiler,
+            array(self::$dbConnection, $query, $invalidParams)
+        );
+    }
+
+    /**
+     * @dataProvider dataConnectionDrivers
+     */
+    public function testGetExplainQuery($driver, $prefix)
+    {
+        $query = 'SELECT * FROM `testing`';
+        $profiler = new PhpQuickProfiler();
+        $reflectedMethod = $this->getAccessibleMethod($profiler, 'getExplainQuery');
+
+        $explainQuery = $reflectedMethod->invokeArgs(
+            $profiler,
+            array($query, $driver)
+        );
+
+        $explainPrefix = str_replace($query, '', $explainQuery);
+        $explainPrefix = trim($explainPrefix);
+        $this->assertEquals($prefix, $explainPrefix);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testGetExplainQueryUnsupportedDriver()
+    {
+        $query = 'SELECT * FROM `testing`';
+        $unsupportedDriver = 'zz';
+        $profiler = new PhpQuickProfiler();
+        $reflectedMethod = $this->getAccessibleMethod($profiler, 'getExplainQuery');
+
+        $explainQuery = $reflectedMethod->invokeArgs(
+            $profiler,
+            array($query, $unsupportedDriver)
+        );
     }
 
     public function testGatherSpeedData()
@@ -132,5 +198,48 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($elapsedTime, $gatheredSpeedData['elapsed']);
         $this->assertArrayHasKey('allowed', $gatheredSpeedData);
         $this->assertEquals($allowedTime, $gatheredSpeedData['allowed']);
+    }
+
+    public function dataProfiledQueries()
+    {
+        return array(
+            array(
+              'sql' => "SELECT * FROM testing",
+              'parameters' => array(),
+              'time' => 25
+            ),
+            array(
+              'sql' => "SELECT id FROM testing WHERE title = :title",
+              'parameters' => array('title' => 'beta'),
+              'time' => 5
+            )
+        );
+    }
+
+    public function dataConnectionDrivers()
+    {
+        return array(
+            array(
+                'driver' => 'mysql',
+                'prefix' => 'EXPLAIN'
+            ),
+            array(
+                'driver' => 'sqlite',
+                'prefix' => 'EXPLAIN QUERY PLAN'
+            )
+        );
+    }
+
+    protected function getAccessibleMethod(PhpQuickProfiler $profiler, $methodName)
+    {
+        $reflectedConsole = new ReflectionClass(get_class($profiler));
+        $reflectedMethod = $reflectedConsole->getMethod($methodName);
+        $reflectedMethod->setAccessible(true);
+        return $reflectedMethod;
+    }
+
+    public static function tearDownAfterClass()
+    {
+        self::$dbConnection = null;
     }
 }

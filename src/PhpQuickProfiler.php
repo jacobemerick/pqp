@@ -130,19 +130,41 @@ class PhpQuickProfiler
      * @param object $dbConnection
      * @param string $query
      * @param array  $parameters
+     * @throws Exception
      * @return array
      */
-    protected function explainQuery($dbConnection, $query, $parameters)
+    protected function explainQuery($dbConnection, $query, $parameters = array())
     {
-        $query = "EXPLAIN {$query}";
-        try {
-            $statement = $dbConnection->prepare($query);
-            $statement->execute($parameters);
-            return $statement->fetch(\PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            echo $e->getMessage();
+        $driver = $dbConnection->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        $query = $this->getExplainQuery($query, $driver);
+        $statement = $dbConnection->prepare($query);
+        if ($statement === false) {
+            throw new Exception('Invalid query passed to explainQuery method');
         }
-        return '';
+        $statement->execute($parameters);
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
+        if ($result === false) {
+            throw new Exception('Query could not be explained with given parameters');
+        }
+        return $result;
+    }
+
+    /**
+     * Attempts to figure out what kind of explain query format the db wants
+     *
+     * @param string $query
+     * @param string $driver
+     * @throws Exception
+     * @return string
+     */
+    protected function getExplainQuery($query, $driver)
+    {
+        if ($driver == 'mysql') {
+            return "EXPLAIN {$query}";
+        } elseif ($driver == 'sqlite') {
+            return "EXPLAIN QUERY PLAN {$query}";
+        }
+        throw new Exception('Could not process db driver');
     }
 
     /**
@@ -165,6 +187,7 @@ class PhpQuickProfiler
      * Triggers end display of the profiling data
      *
      * @param object $dbConnection
+     * @throws Exception
      */
     public function display($dbConnection = null)
     {
