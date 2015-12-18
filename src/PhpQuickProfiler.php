@@ -111,14 +111,10 @@ class PhpQuickProfiler
 
         $data = array();
         foreach ($this->profiledQueries as $query) {
-            if ($query['function'] !== 'perform') {
-                continue;
-            }
-
             array_push($data, array(
-                'sql'     => $query['statement'],
-                'explain' => $this->explainQuery($dbConnection, $query['statement'], $query['bind_values']),
-                'time'    => $query['duration']
+                'sql'     => $query['sql'],
+                'explain' => $this->explainQuery($dbConnection, $query['sql'], $query['parameters']),
+                'time'    => $query['time']
             ));
         }
         return $data;

@@ -15,21 +15,22 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         self::$dbConnection = new PDO('sqlite::memory:');
-        self::$dbConnection->exec("
+        $createTable = "
             CREATE TABLE IF NOT EXISTS `testing` (
                 `id` integer PRIMARY KEY AUTOINCREMENT,
                 `title` varchar(60) NOT NULL
-            );"
-        );
-        self::$dbConnection->exec("
+            );";
+        self::$dbConnection->exec($createTable);
+
+        $hydrateTable = "
             INSERT INTO `testing`
                 (`title`)
             VALUES
                 ('alpha'),
                 ('beta'),
                 ('charlie'),
-                ('delta');"
-        );
+                ('delta');";
+        self::$dbConnection->exec($hydrateTable);
     }
 
     public function testConstruct()
@@ -102,6 +103,34 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
         $this->assertAttributeEquals($profiledQueries, 'profiledQueries', $profiler);
     }
 
+    public function testGatherQueryData()
+    {
+        $profiledQueries = $this->dataProfiledQueries();
+        $profiledQueriesSql = array();
+        $profiledQueriesTime = array();
+        foreach ($profiledQueries as $queryData) {
+            array_push($profiledQueriesSql, $queryData['sql']);
+            array_push($profiledQueriesTime, $queryData['time']);
+        }
+
+        $profiler = new PhpQuickProfiler();
+        $profiler->setProfiledQueries($profiledQueries);
+        $gatheredQueryData = $profiler->gatherQueryData(self::$dbConnection);
+
+        $this->assertInternalType('array', $gatheredQueryData);
+        $this->assertEquals(count($profiledQueries), count($gatheredQueryData));
+        foreach ($gatheredQueryData as $queryData) {
+            $this->assertInternalType('array', $queryData);
+            $this->assertArrayHasKey('sql', $queryData);
+            $this->assertContains($queryData['sql'], $profiledQueriesSql);
+            $this->assertArrayHasKey('explain', $queryData);
+            $this->assertInternaltype('array', $queryData['explain']);
+            $this->assertGreaterThan(0, count($queryData['explain']));
+            $this->assertArrayHasKey('time', $queryData);
+            $this->assertContains($queryData['time'], $profiledQueriesTime);
+        }
+    }
+
     /**
      * @dataProvider dataProfiledQueries
      */
@@ -127,7 +156,7 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
         $profiler = new PhpQuickProfiler();
         $reflectedMethod = $this->getAccessibleMethod($profiler, 'explainQuery');
 
-        $explainedQuery = $reflectedMethod->invokeArgs(
+        $reflectedMethod->invokeArgs(
             $profiler,
             array(self::$dbConnection, $invalidQuery)
         );
@@ -143,7 +172,7 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
         $profiler = new PhpQuickProfiler();
         $reflectedMethod = $this->getAccessibleMethod($profiler, 'explainQuery');
 
-        $explainedQuery = $reflectedMethod->invokeArgs(
+        $reflectedMethod->invokeArgs(
             $profiler,
             array(self::$dbConnection, $query, $invalidParams)
         );
@@ -178,7 +207,7 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
         $profiler = new PhpQuickProfiler();
         $reflectedMethod = $this->getAccessibleMethod($profiler, 'getExplainQuery');
 
-        $explainQuery = $reflectedMethod->invokeArgs(
+        $reflectedMethod->invokeArgs(
             $profiler,
             array($query, $unsupportedDriver)
         );
