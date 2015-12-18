@@ -30,7 +30,7 @@ class PhpQuickProfiler
     protected $profiledQueries = array();
 
     /**
-     * @param integer $startTime
+     * @param double $startTime
      */
     public function __construct($startTime = null)
     {
@@ -153,6 +153,7 @@ class PhpQuickProfiler
     public function gatherSpeedData()
     {
         $elapsedTime = microtime(true) - $this->startTime;
+        $elapsedTime = round($elapsedTime, 3);
         $allowedTime = ini_get('max_execution_time');
         return array(
             'elapsed' => $elapsedTime,
