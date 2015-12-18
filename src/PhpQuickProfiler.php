@@ -17,7 +17,7 @@ use Exception;
 class PhpQuickProfiler
 {
 
-    /** @var  integer */
+    /** @var  double */
     protected $startTime;
 
     /** @var  Console */

@@ -2,7 +2,6 @@
 
 namespace Particletree\Pqp;
 
-use PDO;
 use PHPUnit_Framework_Testcase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -14,7 +13,7 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        self::$dbConnection = new PDO('sqlite::memory:');
+        self::$dbConnection = new LoggingPdo('sqlite::memory:');
         $createTable = "
             CREATE TABLE IF NOT EXISTS `testing` (
                 `id` integer PRIMARY KEY AUTOINCREMENT,
@@ -129,6 +128,17 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
             $this->assertArrayHasKey('time', $queryData);
             $this->assertContains($queryData['time'], $profiledQueriesTime);
         }
+    }
+
+    public function testGatherQueryDataInternalProfiler()
+    {
+        $profiledQueries = $this->dataProfiledQueries();
+        $dbConnection = self::$dbConnection;
+        $dbConnection->queries = $profiledQueries;
+        $profiler = new PhpQuickProfiler();
+        $profiler->gatherQueryData($dbConnection);
+
+        $this->assertAttributeSame($profiledQueries, 'profiledQueries', $profiler);
     }
 
     /**
