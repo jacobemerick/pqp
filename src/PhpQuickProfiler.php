@@ -90,7 +90,7 @@ class PhpQuickProfiler
     }
 
     /**
-     * @param array $profiled_queries
+     * @param array $profiledQueries
      */
     public function setProfiledQueries(array $profiledQueries)
     {
