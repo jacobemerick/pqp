@@ -239,6 +239,62 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($allowedTime, $gatheredSpeedData['allowed']);
     }
 
+    public function testDisplay()
+    {
+        $console = new Console();
+        $profiler = new PhpQuickProfiler();
+
+        $expectedDisplay = new Display();
+        $expectedDisplay->setConsole($console);
+        $expectedDisplay->setFileData($profiler->gatherFileData());
+        $expectedDisplay->setMemoryData($profiler->gatherMemoryData());
+        $expectedDisplay->setQueryData($profiler->gatherQueryData());
+        $expectedDisplay->setSpeedData($profiler->gatherSpeedData());
+        ob_start();
+        $expectedDisplay->__invoke();
+        ob_end_clean();
+
+        $display = new Display();
+        $profiler->setConsole($console);
+        $profiler->setDisplay($display);
+        ob_start();
+        $profiler->display();
+        ob_end_clean();
+
+        $this->assertAttributeEquals($expectedDisplay, 'display', $profiler);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testDisplayNothingSetException()
+    {
+        $profiler = new PhpQuickProfiler();
+        $profiler->display();
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testDisplayNoConsoleException()
+    {
+        $display = new Display();
+        $profiler = new PhpQuickProfiler();
+        $profiler->setDisplay($display);
+        $profiler->display();
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testDisplayNoDisplayException()
+    {
+        $console = new Console();
+        $profiler = new PhpQuickProfiler();
+        $profiler->setConsole($console);
+        $profiler->display();
+    }
+
     public function dataProfiledQueries()
     {
         return array(

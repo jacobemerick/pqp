@@ -103,8 +103,12 @@ class PhpQuickProfiler
      * @param object $dbConnection
      * @returns array
      */
-    public function gatherQueryData($dbConnection)
+    public function gatherQueryData($dbConnection = null)
     {
+        if (is_null($dbConnection)) {
+            return array();
+        }
+
         if (empty($this->profiledQueries) && property_exists($dbConnection, 'queries')) {
             $this->setProfiledQueries($dbConnection->queries);
         }
@@ -189,6 +193,9 @@ class PhpQuickProfiler
     {
         if (!isset($this->display)) {
             throw new Exception('Display object has not been injected into Profiler');
+        }
+        if (!isset($this->console)) {
+            throw new Exception('Console object has not been injected into Profiler');
         }
 
         $this->display->setConsole($this->console);
