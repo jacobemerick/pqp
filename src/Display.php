@@ -23,8 +23,20 @@ class Display
     /** @var  array */
     protected $options;
 
+    /** @var  Console */
+    protected $console;
+
     /** @var  array */
-    protected $output;
+    protected $speedData;
+
+    /** @var  array */
+    protected $queryData;
+
+    /** @var  array */
+    protected $memoryData;
+
+    /** @var  array */
+    protected $fileData;
 
     /**
      * @param array $options
@@ -35,7 +47,18 @@ class Display
         $this->options = array_replace($this->defaults, $options);
     }
 
+    /**
+     * @param Console $console
+     */
     public function setConsole(Console $console)
+    {
+        $this->console = $console;
+    }
+
+    /**
+     * @return array
+     */
+    protected function formatConsoleData()
     {
         $console_data = array(
             'messages' => array(),
@@ -46,7 +69,7 @@ class Display
                 'speed'  => 0
             )
         );
-        foreach ($console->getLogs() as $log) {
+        foreach ($this->console->getLogs() as $log) {
             switch($log['type']) {
                 case 'log':
                     $message = array(
@@ -89,7 +112,7 @@ class Display
             }
             array_push($console_data['messages'], $message);
         }
-        $this->output['console'] = $console_data;
+        return $console_data;
     }
 
     /**
@@ -99,16 +122,24 @@ class Display
      */
     public function setFileData(array $data)
     {
+        $this->fileData = $data;
+    }
+
+    /**
+     * @return array
+     */
+    protected function formatFileData()
+    {
         $fileData = array(
             'messages' => array(),
             'meta'     => array(
-                'count'   => count($data),
+                'count'   => count($this->fileData),
                 'size'    => 0,
                 'largest' => 0
             )
         );
 
-        foreach ($data as $file) {
+        foreach ($this->fileData as $file) {
             array_push($fileData['messages'], array(
                 'message' => $file['name'],
                 'data'    => $this->getReadableMemory($file['size'])
@@ -123,7 +154,7 @@ class Display
         $fileData['meta']['size'] = $this->getReadableMemory($fileData['meta']['size']);
         $fileData['meta']['largest'] = $this->getReadableMemory($fileData['meta']['largest']);
 
-        $this->output['files'] = $fileData;
+        return $fileData;
     }
 
     /**
@@ -133,24 +164,47 @@ class Display
      */
     public function setMemoryData(array $data)
     {
-        $this->output['memory']['meta'] = array(
-            'used'    => $this->getReadableMemory($data['used']),
-            'allowed' => $data['allowed']
+        $this->memoryData = $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function formatMemoryData()
+    {
+        return array(
+            'meta' => array(
+                'used'    => $this->getReadableMemory($this->memoryData['used']),
+                'allowed' => $this->memoryData['allowed']
+            )
         );
     }
 
+    /**
+     * Sets query data
+     *
+     * @param array $data
+     */
     public function setQueryData(array $data)
+    {
+        $this->queryData = $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function formatQueryData()
     {
         $queryData = array(
             'messages' => array(),
             'meta'     => array(
-                'count'   => count($data),
+                'count'   => count($this->queryData),
                 'time'    => 0,
                 'slowest' => 0
             )
         );
 
-        foreach ($data as $query) {
+        foreach ($this->queryData as $query) {
             array_push($queryData['messages'], array(
                 'message'  => $query['sql'],
                 'sub_data' => array_filter($query['explain']),
@@ -165,7 +219,7 @@ class Display
         $queryData['meta']['time'] = $this->getReadableTime($queryData['meta']['time']);
         $queryData['meta']['slowest'] = $this->getReadableTime($queryData['meta']['slowest']);
 
-        $this->output['query'] = $queryData;
+        return $queryData;
     }
 
     /**
@@ -175,9 +229,19 @@ class Display
      */
     public function setSpeedData(array $data)
     {
-        $this->output['speed']['meta'] = array(
-            'elapsed' => $this->getReadableTime($data['elapsed']),
-            'allowed' => $this->getReadableTime($data['allowed'], 0)
+        $this->speedData = $data;
+    }
+
+    /**
+     * @return array
+     */
+    protected function formatSpeedData()
+    {
+        return array(
+            'meta' => array(
+              'elapsed' => $this->getReadableTime($this->speedData['elapsed']),
+              'allowed' => $this->getReadableTime($this->speedData['allowed'], 0)
+            )
         );
     }
 
@@ -223,30 +287,27 @@ class Display
  
     public function __invoke()
     {
-        $output = $this->output;
+        $console= $this->formatConsoleData();
+        $speed= $this->formatSpeedData();
+        $query= $this->formatQueryData();
+        $memory= $this->formatMemoryData();
+        $files= $this->formatFileData();
+
         $header = array(
-          'console' => count($output['console']['messages']),
-          'speed'   => $output['speed']['meta']['elapsed'],
-          'query'   => $output['query']['meta']['count'],
-          'memory'  => $output['memory']['meta']['used'],
-          'files'   => $output['files']['meta']['count']
+          'console' => count($console['messages']),
+          'speed'   => $speed['meta']['elapsed'],
+          'query'   => $query['meta']['count'],
+          'memory'  => $memory['meta']['used'],
+          'files'   => $files['meta']['count']
         );
 
-        $console = $output['console'];
-
-        $speed = $output['speed'];
         $speed['messages'] = array_filter($console['messages'], function ($message) {
             return $message['type'] == 'speed';
         });
 
-        $query = $output['query'];
-
-        $memory = $output['memory'];
         $memory['messages'] = array_filter($console['messages'], function ($message) {
             return $message['type'] == 'memory';
         });
-
-        $files = $output['files'];
 
         // todo is this really the best way to load these?
         $styles = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");

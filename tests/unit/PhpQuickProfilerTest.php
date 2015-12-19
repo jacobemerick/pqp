@@ -4,7 +4,6 @@ namespace Particletree\Pqp;
 
 use PHPUnit_Framework_Testcase;
 use ReflectionClass;
-use ReflectionMethod;
 
 class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
 {

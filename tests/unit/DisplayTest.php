@@ -8,6 +8,27 @@ use ReflectionClass;
 class DisplayTest extends PHPUnit_Framework_TestCase
 {
 
+    public function testConstruct()
+    {
+        $display = new Display();
+        $reflectedDisplay = new ReflectionClass(get_class($display));
+        $reflectedProperty = $reflectedDisplay->getProperty('defaults');
+        $reflectedProperty->setAccessible(true);
+        $defaults = $reflectedProperty->getValue($display);
+
+        $display = new Display();
+        $this->assertAttributeEquals($defaults, 'options', $display);
+
+        $options = array(
+            'script_path' => 'testing/testing.js',
+            'fake_key' => 'foo bar'
+        );
+        $expectedOptions = array_intersect_key($options, $defaults);
+        $expectedOptions = array_replace($defaults, $expectedOptions);
+        $display = new Display($options);
+        $this->assertAttributeEquals($expectedOptions, 'options', $display);
+    }
+
     public function testGetReadableTime()
     {
         $timeTest = array(
@@ -18,9 +39,9 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         $display = new Display();
         $reflectedMethod = $this->getAccessibleMethod($display, 'getReadableTime');
 
-        foreach ($timeTest as $rawTime => $expectedReadableTime) {
+        foreach ($timeTest as $rawTime => $expectedTime) {
             $readableTime = $reflectedMethod->invokeArgs($display, array($rawTime));
-            $this->assertEquals($expectedReadableTime, $readableTime);
+            $this->assertEquals($expectedTime, $readableTime);
         }
     }
 
@@ -34,9 +55,9 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         $display = new Display();
         $reflectedMethod = $this->getAccessibleMethod($display, 'getReadableMemory');
 
-        foreach ($memoryTest as $rawMemory => $expectedReadableMemory) {
+        foreach ($memoryTest as $rawMemory => $expectedMemory) {
             $readableMemory = $reflectedMethod->invokeArgs($display, array($rawMemory));
-            $this->assertEquals($expectedReadableMemory, $readableMemory);
+            $this->assertEquals($expectedMemory, $readableMemory);
         }
     }
 
