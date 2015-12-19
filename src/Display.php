@@ -23,6 +23,9 @@ class Display
     /** @var  array */
     protected $options;
 
+    /** @var  double */
+    protected $startTime;
+
     /** @var  Console */
     protected $console;
 
@@ -45,6 +48,14 @@ class Display
     {
         $options = array_intersect_key($options, $this->defaults);
         $this->options = array_replace($this->defaults, $options);
+    }
+
+    /**
+     * @param double $startTime
+     */
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
     }
 
     /**
@@ -116,6 +127,30 @@ class Display
     }
 
     /**
+     * Sets speed data
+     *
+     * @param array $data
+     */
+    public function setSpeedData(array $data)
+    {
+        $this->speedData = $data;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getSpeedMeta()
+    {
+        $elapsedTime = $this->getReadableTime($this->speedData['elapsed']);
+        $allowedTime = $this->getReadableTime($this->speedData['allowed'], 0);
+
+        return array(
+            'elapsed' => $elapsedTime,
+            'allowed' => $allowedTime,
+        );
+    }
+
+    /**
      * Sets file data
      *
      * @param array $data
@@ -170,13 +205,14 @@ class Display
     /**
      * @return array
      */
-    public function formatMemoryData()
+    public function getMemoryMeta()
     {
+        $usedMemory = $this->getReadableMemory($this->memoryData['used']);
+        $allowedMemory = $this->memoryData['allowed']; // todo parse this, maybe?
+
         return array(
-            'meta' => array(
-                'used'    => $this->getReadableMemory($this->memoryData['used']),
-                'allowed' => $this->memoryData['allowed']
-            )
+            'used'    => $usedMemory,
+            'allowed' => $allowedMemory
         );
     }
 
@@ -222,28 +258,6 @@ class Display
         return $queryData;
     }
 
-    /**
-     * Sets speed data
-     *
-     * @param array $data
-     */
-    public function setSpeedData(array $data)
-    {
-        $this->speedData = $data;
-    }
-
-    /**
-     * @return array
-     */
-    protected function formatSpeedData()
-    {
-        return array(
-            'meta' => array(
-              'elapsed' => $this->getReadableTime($this->speedData['elapsed']),
-              'allowed' => $this->getReadableTime($this->speedData['allowed'], 0)
-            )
-        );
-    }
 
     /**
      * Formatter for human-readable time
@@ -284,35 +298,49 @@ class Display
         $unit = $unitOptions[floor($base)];
         return "{$memory} {$unit}";
     }
+
+    /**
+     * @param array  $messages
+     * @param string $type
+     * @return array
+     */
+    protected function filterMessages($messages, $type)
+    {
+        return array_filter($messages, function ($message) use ($type) {
+            return $message['type'] == $type;
+        });
+    }
  
     public function __invoke()
     {
-        $console= $this->formatConsoleData();
-        $speed= $this->formatSpeedData();
+        $console = $this->formatConsoleData();
+        $speedMeta = $this->getSpeedMeta();
         $query= $this->formatQueryData();
-        $memory= $this->formatMemoryData();
+        $memoryMeta = $this->getMemoryMeta();
         $files= $this->formatFileData();
 
         $header = array(
-          'console' => count($console['messages']),
-          'speed'   => $speed['meta']['elapsed'],
-          'query'   => $query['meta']['count'],
-          'memory'  => $memory['meta']['used'],
-          'files'   => $files['meta']['count']
+            'console' => count($console['messages']),
+            'speed'   => $speedMeta['elapsed'],
+            'query'   => $query['meta']['count'],
+            'memory'  => $memoryMeta['used'],
+            'files'   => $files['meta']['count']
         );
 
-        $speed['messages'] = array_filter($console['messages'], function ($message) {
-            return $message['type'] == 'speed';
-        });
+        $speed = array(
+            'meta' => $speedMeta,
+            'messages' => $this->filterMessages($console['messages'], 'speed')
+        );
 
-        $memory['messages'] = array_filter($console['messages'], function ($message) {
-            return $message['type'] == 'memory';
-        });
+        $memory = array(
+            'meta' => $memoryMeta,
+            'messages' => $this->filterMessages($console['messages'], 'memory')
+        );
 
         // todo is this really the best way to load these?
-        $styles = file_get_contents(__DIR__ . "./../{$this->options['style_path']}");
-        $script = file_get_contents(__DIR__ . "./../{$this->options['script_path']}");
+        $styles = file_get_contents(__DIR__ . "/../{$this->options['style_path']}");
+        $script = file_get_contents(__DIR__ . "/../{$this->options['script_path']}");
 
         require_once __DIR__ .'/../asset/display.html';
     }
-}	
+}

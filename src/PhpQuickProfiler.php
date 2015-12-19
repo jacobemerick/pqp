@@ -198,6 +198,7 @@ class PhpQuickProfiler
             throw new Exception('Console object has not been injected into Profiler');
         }
 
+        $this->display->setStartTime($this->startTime);
         $this->display->setConsole($this->console);
         $this->display->setFileData($this->gatherFileData());
         $this->display->setMemoryData($this->gatherMemoryData());
