@@ -58,7 +58,7 @@ class Display
                 case 'memory':
                     $message = array(
                         'message' => (!empty($log['data_type']) ? "{$log['data_type']}: " : '') . $log['name'],
-                        'data'    => self::getReadableMemory($log['data']),
+                        'data'    => $this->getReadableMemory($log['data']),
                         'type'    => 'memory'
                     );
                     $console_data['meta']['memory']++;
@@ -74,7 +74,7 @@ class Display
                     $elapsedTime = $log['data'] - $this->startTime;
                     $message = array(
                         'message' => $log['name'],
-                        'data'    => self::getReadableTime($elapsedTime),
+                        'data'    => $this->getReadableTime($elapsedTime),
                         'type'    => 'speed'
                     );
                     $console_data['meta']['speed']++;
@@ -111,7 +111,7 @@ class Display
         foreach ($data as $file) {
             array_push($fileData['messages'], array(
                 'message' => $file['name'],
-                'data'    => self::getReadableMemory($file['size'])
+                'data'    => $this->getReadableMemory($file['size'])
             ));
 
             $fileData['meta']['size'] += $file['size'];
@@ -120,8 +120,8 @@ class Display
             }
         }
 
-        $fileData['meta']['size'] = self::getReadableMemory($fileData['meta']['size']);
-        $fileData['meta']['largest'] = self::getReadableMemory($fileData['meta']['largest']);
+        $fileData['meta']['size'] = $this->getReadableMemory($fileData['meta']['size']);
+        $fileData['meta']['largest'] = $this->getReadableMemory($fileData['meta']['largest']);
 
         $this->output['files'] = $fileData;
     }
@@ -134,7 +134,7 @@ class Display
     public function setMemoryData(array $data)
     {
         $this->output['memory']['meta'] = array(
-            'used'    => self::getReadableMemory($data['used']),
+            'used'    => $this->getReadableMemory($data['used']),
             'allowed' => $data['allowed']
         );
     }
@@ -154,7 +154,7 @@ class Display
             array_push($queryData['messages'], array(
                 'message'  => $query['sql'],
                 'sub_data' => array_filter($query['explain']),
-                'data'     => self::getReadableTime($query['time'])
+                'data'     => $this->getReadableTime($query['time'])
             ));
             $queryData['meta']['time'] += $query['time'];
             if ($query['time'] > $queryData['meta']['slowest']) {
@@ -162,8 +162,8 @@ class Display
             }
         }
 
-        $queryData['meta']['time'] = self::getReadableTime($queryData['meta']['time']);
-        $queryData['meta']['slowest'] = self::getReadableTime($queryData['meta']['slowest']);
+        $queryData['meta']['time'] = $this->getReadableTime($queryData['meta']['time']);
+        $queryData['meta']['slowest'] = $this->getReadableTime($queryData['meta']['slowest']);
 
         $this->output['query'] = $queryData;
     }
@@ -176,20 +176,20 @@ class Display
     public function setSpeedData(array $data)
     {
         $this->output['speed']['meta'] = array(
-            'elapsed' => self::getReadableTime($data['elapsed']),
-            'allowed' => self::getReadableTime($data['allowed'], 0)
+            'elapsed' => $this->getReadableTime($data['elapsed']),
+            'allowed' => $this->getReadableTime($data['allowed'], 0)
         );
     }
 
     /**
-     * Static formatter for human-readable time
+     * Formatter for human-readable time
      * Only handles time up to 60 minutes gracefully
      *
      * @param double  $time
-     * @param integer $decimals
+     * @param integer $percision
      * @return string
      */
-    public static function getReadableTime($time, $decimals = 3)
+    protected function getReadableTime($time, $percision = 3)
     {
         $unit = 's';
         if ($time < 1) {
@@ -199,23 +199,24 @@ class Display
             $time /= 60;
             $unit = 'm';
         }
-        $time = number_format($time, $decimals);
+        $time = number_format($time, $percision);
         return "{$time} {$unit}";
     }
 
     /**
-     * Static formatter for human-readable memory
+     * Formatter for human-readable memory
+     * Only handles time up to a few gigs gracefully
      *
      * @param double  $size
-     * @param integer $decimals
+     * @param integer $percision
      */
-    public static function getReadableMemory($size, $decimals = 2)
+    protected function getReadableMemory($size, $percision = 2)
     {
         $unitOptions = array('b', 'k', 'M', 'G');
 
         $base = log($size, 1024);
 
-        $memory = round(pow(1024, $base - floor($base)), $decimals);
+        $memory = round(pow(1024, $base - floor($base)), $percision);
         $unit = $unitOptions[floor($base)];
         return "{$memory} {$unit}";
     }
