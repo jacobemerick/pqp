@@ -120,9 +120,9 @@ class Display
         foreach ($this->console->getLogs() as $log) {
             if (array_key_exists($log['type'], $consoleMeta)) {
                 $consoleMeta[$log['type']]++;
-            } else {
-                $consoleMeta['error']++;
+                continue;
             }
+            $consoleMeta['error']++;
         }
 
         return $consoleMeta;
@@ -135,7 +135,7 @@ class Display
     {
         $messages = array();
         foreach ($this->console->getLogs() as $log) {
-            switch($log['type']) {
+            switch ($log['type']) {
                 case 'log':
                     $message = array(
                         'message' => print_r($log['data'], true),
@@ -292,7 +292,7 @@ class Display
         if ($time < 1) {
             $time *= 1000;
             $unit = 'ms';
-        } else if ($time > 60) {
+        } elseif ($time > 60) {
             $time /= 60;
             $unit = 'm';
         }
