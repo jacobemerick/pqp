@@ -67,63 +67,23 @@ class Display
     }
 
     /**
-     * @return array
+     * Sets memory data
+     *
+     * @param array $data
      */
-    protected function formatConsoleData()
+    public function setMemoryData(array $data)
     {
-        $console_data = array(
-            'messages' => array(),
-            'meta'    => array(
-                'log'    => 0,
-                'memory' => 0,
-                'error'  => 0,
-                'speed'  => 0
-            )
-        );
-        foreach ($this->console->getLogs() as $log) {
-            switch($log['type']) {
-                case 'log':
-                    $message = array(
-                        'message' => print_r($log['data'], true),
-                        'type'    => 'log'
-                    );
-                    $console_data['meta']['log']++;
-                    break;
-                case 'memory':
-                    $message = array(
-                        'message' => (!empty($log['data_type']) ? "{$log['data_type']}: " : '') . $log['name'],
-                        'data'    => $this->getReadableMemory($log['data']),
-                        'type'    => 'memory'
-                    );
-                    $console_data['meta']['memory']++;
-                    break;
-                case 'error':
-                    $message = array(
-                        'message' => "Line {$log['line']}: {$log['data']} in {$log['file']}",
-                        'type'    => 'error'
-                    );
-                    $console_data['meta']['error']++;
-                    break;
-                case 'speed':
-                    $elapsedTime = $log['data'] - $this->startTime;
-                    $message = array(
-                        'message' => $log['name'],
-                        'data'    => $this->getReadableTime($elapsedTime),
-                        'type'    => 'speed'
-                    );
-                    $console_data['meta']['speed']++;
-                    break;
-                default:
-                    $message = array(
-                        'message' => "Unrecognized console log type: {$log['type']}",
-                        'type'    => 'error'
-                    );
-                    $console_data['meta']['error']++;
-                    break;
-            }
-            array_push($console_data['messages'], $message);
-        }
-        return $console_data;
+        $this->memoryData = $data;
+    }
+
+    /**
+     * Sets query data
+     *
+     * @param array $data
+     */
+    public function setQueryData(array $data)
+    {
+        $this->queryData = $data;
     }
 
     /**
@@ -134,6 +94,85 @@ class Display
     public function setSpeedData(array $data)
     {
         $this->speedData = $data;
+    }
+
+    /**
+     * Sets file data
+     *
+     * @param array $data
+     */
+    public function setFileData(array $data)
+    {
+        $this->fileData = $data;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConsoleMeta()
+    {
+        $consoleMeta = array(
+            'log' => 0,
+            'memory' => 0,
+            'error' => 0,
+            'speed' => 0
+        );
+        foreach ($this->console->getLogs() as $log) {
+            if (array_key_exists($log['type'], $consoleMeta)) {
+                $consoleMeta[$log['type']]++;
+            } else {
+                $consoleMeta['error']++;
+            }
+        }
+
+        return $consoleMeta;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConsoleMessages()
+    {
+        $messages = array();
+        foreach ($this->console->getLogs() as $log) {
+            switch($log['type']) {
+                case 'log':
+                    $message = array(
+                        'message' => print_r($log['data'], true),
+                        'type'    => 'log'
+                    );
+                    break;
+                case 'memory':
+                    $message = array(
+                        'message' => (!empty($log['data_type']) ? "{$log['data_type']}: " : '') . $log['name'],
+                        'data'    => $this->getReadableMemory($log['data']),
+                        'type'    => 'memory'
+                    );
+                    break;
+                case 'error':
+                    $message = array(
+                        'message' => "Line {$log['line']}: {$log['data']} in {$log['file']}",
+                        'type'    => 'error'
+                    );
+                    break;
+                case 'speed':
+                    $elapsedTime = $log['data'] - $this->startTime;
+                    $message = array(
+                        'message' => $log['name'],
+                        'data'    => $this->getReadableTime($elapsedTime),
+                        'type'    => 'speed'
+                    );
+                    break;
+                default:
+                    $message = array(
+                        'message' => "Unrecognized console log type: {$log['type']}",
+                        'type'    => 'error'
+                    );
+                    break;
+            }
+            array_push($messages, $message);
+        }
+        return $messages;
     }
 
     /**
@@ -151,55 +190,41 @@ class Display
     }
 
     /**
-     * Sets file data
-     *
-     * @param array $data
+     * @return array
      */
-    public function setFileData(array $data)
+    public function getQueryMeta()
     {
-        $this->fileData = $data;
+        $queryCount = count($this->queryData);
+        $queryTotalTime = array_reduce($this->queryData, function ($sum, $row) {
+            return $sum + $row['time'];
+        }, 0);
+        $queryTotalTime = $this->getReadableTime($queryTotalTime);
+        $querySlowestTime = array_reduce($this->queryData, function ($slowest, $row) {
+            return ($slowest < $row['time']) ? $row['time'] : $slowest;
+        }, 0);
+        $querySlowestTime = $this->getReadableTime($querySlowestTime);
+
+        return array(
+            'count'   => $queryCount,
+            'time'    => $queryTotalTime,
+            'slowest' => $querySlowestTime
+        );
     }
 
     /**
      * @return array
      */
-    protected function formatFileData()
+    public function getQueryList()
     {
-        $fileData = array(
-            'messages' => array(),
-            'meta'     => array(
-                'count'   => count($this->fileData),
-                'size'    => 0,
-                'largest' => 0
-            )
-        );
-
-        foreach ($this->fileData as $file) {
-            array_push($fileData['messages'], array(
-                'message' => $file['name'],
-                'data'    => $this->getReadableMemory($file['size'])
+        $queryList = array();
+        foreach ($this->queryData as $query) {
+            array_push($queryList, array(
+                'message'  => $query['sql'],
+                'sub_data' => array_filter($query['explain']),
+                'data'     => $this->getReadableTime($query['time'])
             ));
-
-            $fileData['meta']['size'] += $file['size'];
-            if ($file['size'] > $fileData['meta']['largest']) {
-                $fileData['meta']['largest'] = $file['size'];
-            }
         }
-
-        $fileData['meta']['size'] = $this->getReadableMemory($fileData['meta']['size']);
-        $fileData['meta']['largest'] = $this->getReadableMemory($fileData['meta']['largest']);
-
-        return $fileData;
-    }
-
-    /**
-     * Sets memory data
-     *
-     * @param array $data
-     */
-    public function setMemoryData(array $data)
-    {
-        $this->memoryData = $data;
+        return $queryList;
     }
 
     /**
@@ -217,47 +242,41 @@ class Display
     }
 
     /**
-     * Sets query data
-     *
-     * @param array $data
+     * @return array
      */
-    public function setQueryData(array $data)
+    protected function getFileMeta()
     {
-        $this->queryData = $data;
+        $fileCount = count($this->fileData);
+        $fileTotalSize = array_reduce($this->fileData, function ($sum, $row) {
+            return $sum + $row['size'];
+        }, 0);
+        $fileTotalSize = $this->getReadableMemory($fileTotalSize);
+        $fileLargestSize = array_reduce($this->fileData, function ($largest, $row) {
+            return ($largest < $row['size']) ? $row['size'] : $largest;
+        }, 0);
+        $fileLargestSize = $this->getReadableMemory($fileLargestSize);
+
+        return array(
+            'count' => $fileCount,
+            'size' => $fileTotalSize,
+            'largest' => $fileLargestSize
+        );
     }
 
     /**
      * @return array
      */
-    public function formatQueryData()
+    protected function getFileList()
     {
-        $queryData = array(
-            'messages' => array(),
-            'meta'     => array(
-                'count'   => count($this->queryData),
-                'time'    => 0,
-                'slowest' => 0
-            )
-        );
-
-        foreach ($this->queryData as $query) {
-            array_push($queryData['messages'], array(
-                'message'  => $query['sql'],
-                'sub_data' => array_filter($query['explain']),
-                'data'     => $this->getReadableTime($query['time'])
+        $fileList = array();
+        foreach ($this->fileData as $file) {
+            array_push($fileList, array(
+                'message' => $file['name'],
+                'data'    => $this->getReadableMemory($file['size'])
             ));
-            $queryData['meta']['time'] += $query['time'];
-            if ($query['time'] > $queryData['meta']['slowest']) {
-                $queryData['meta']['slowest'] = $query['time'];
-            }
         }
-
-        $queryData['meta']['time'] = $this->getReadableTime($queryData['meta']['time']);
-        $queryData['meta']['slowest'] = $this->getReadableTime($queryData['meta']['slowest']);
-
-        return $queryData;
+        return $fileList;
     }
-
 
     /**
      * Formatter for human-readable time
@@ -313,28 +332,47 @@ class Display
  
     public function __invoke()
     {
-        $console = $this->formatConsoleData();
+        $consoleMeta = $this->getConsoleMeta();
         $speedMeta = $this->getSpeedMeta();
-        $query= $this->formatQueryData();
+        $queryMeta = $this->getQueryMeta();
         $memoryMeta = $this->getMemoryMeta();
-        $files= $this->formatFileData();
+        $fileMeta = $this->getFileMeta();
 
         $header = array(
-            'console' => count($console['messages']),
+            'console' => array_sum($consoleMeta),
             'speed'   => $speedMeta['elapsed'],
-            'query'   => $query['meta']['count'],
+            'query'   => $queryMeta['count'],
             'memory'  => $memoryMeta['used'],
-            'files'   => $files['meta']['count']
+            'files'   => $fileMeta['count']
+        );
+
+        $consoleMessages = $this->getConsoleMessages();
+        $queryList = $this->getQueryList();
+        $fileList = $this->getFileList();
+
+        $console = array(
+            'meta' => $consoleMeta,
+            'messages' => $consoleMessages
         );
 
         $speed = array(
             'meta' => $speedMeta,
-            'messages' => $this->filterMessages($console['messages'], 'speed')
+            'messages' => $this->filterMessages($consoleMessages, 'speed')
+        );
+
+        $query = array(
+            'meta' => $queryMeta,
+            'messages' => $queryList
         );
 
         $memory = array(
             'meta' => $memoryMeta,
-            'messages' => $this->filterMessages($console['messages'], 'memory')
+            'messages' => $this->filterMessages($consoleMessages, 'memory')
+        );
+
+        $files = array(
+            'meta' => $fileMeta,
+            'messages' => $fileList
         );
 
         // todo is this really the best way to load these?

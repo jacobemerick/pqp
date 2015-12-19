@@ -243,7 +243,13 @@ class PhpQuickProfilerTest extends PHPUnit_Framework_TestCase
         $console = new Console();
         $profiler = new PhpQuickProfiler();
 
+        $reflectedProfiler = new ReflectionClass(get_class($profiler));
+        $reflectedProperty = $reflectedProfiler->getProperty('startTime');
+        $reflectedProperty->setAccessible(true);
+        $startTime = $reflectedProperty->getValue($profiler);
+
         $expectedDisplay = new Display();
+        $expectedDisplay->setStartTime($startTime);
         $expectedDisplay->setConsole($console);
         $expectedDisplay->setFileData($profiler->gatherFileData());
         $expectedDisplay->setMemoryData($profiler->gatherMemoryData());
