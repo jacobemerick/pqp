@@ -24,6 +24,12 @@ function filesize($filename)
 }
 
 // namespace hack on memory usage
+function memory_get_usage()
+{
+    return 12345678;
+}
+
+// namespace hack on memory usage
 function memory_get_peak_usage()
 {
     return 123456789;
