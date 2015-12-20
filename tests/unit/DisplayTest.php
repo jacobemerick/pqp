@@ -142,7 +142,8 @@ class DisplayTest extends PHPUnit_Framework_TestCase
                     $this->assertEquals($expectedData, $message['data']);
                     break;
                 case 'error':
-                    $expectedMessage = sprintf("Line %s: %s in %s",
+                    $expectedMessage = sprintf(
+                        "Line %s: %s in %s",
                         $testException->getLine(),
                         $testException->getMessage(),
                         $testException->getFile()
