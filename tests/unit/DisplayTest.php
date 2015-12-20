@@ -87,18 +87,13 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         $this->assertAttributeEquals($speedData, 'speedData', $display);
     }
 
-    public function testGetConsoleMeta()
+    /**
+     * @dataProvider dataConsoleStore
+     */
+    public function testGetConsoleMeta($consoleStore, $expectedMeta, $expectedMessages)
     {
-        $expectedMeta = array(
-            'log'    => 1,
-            'memory' => 0,
-            'error'  => 0,
-            'speed'  => 2
-        );
         $console = new Console();
-        $console->log('testing words');
-        $console->logSpeed('now');
-        $console->logSpeed();
+        $this->setInternalProperty($console, 'store', $consoleStore);
         $display = new Display();
         $display->setConsole($console);
         $reflectedMethod = $this->getAccessibleMethod($display, 'getConsoleMeta');
@@ -107,61 +102,19 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedMeta, $consoleMeta);
     }
 
-    public function testGetConsoleMessages()
+    /**
+     * @dataProvider dataConsoleStore
+     */
+    public function testGetConsoleMessages($consoleStore, $expectedMeta, $expectedMessages)
     {
         $console = new Console();
-        $testLog = 'testing more words';
-        $console->log($testLog);
-        $console->logMemory();
-        $testException = new Exception('test exception');
-        $console->logError($testException);
-        $console->logSpeed();
+        $this->setInternalProperty($console, 'store', $consoleStore);
         $display = new Display();
         $display->setConsole($console);
         $reflectedMethod = $this->getAccessibleMethod($display, 'getConsoleMessages');
 
         $consoleMessages = $reflectedMethod->invoke($display);
-        foreach ($consoleMessages as $message) {
-            $this->assertArrayHasKey('message', $message);
-            $this->assertInternalType('string', $message['message']);
-            $this->assertArrayHasKey('type', $message);
-            $this->assertInternalType('string', $message['type']);
-            switch ($message['type']) {
-                case 'log':
-                    $expectedMessage = print_r($testLog, true);
-                    $this->assertEquals($expectedMessage, $message['message']);
-                    break;
-                case 'memory':
-                    $expectedMessage = 'PHP';
-                    $this->assertEquals($expectedMessage, $message['message']);
-                    $this->assertArrayHasKey('data', $message);
-                    $this->assertInternalType('string', $message['data']);
-                    $expectedData = memory_get_usage();
-                    $reflectedMethod = $this->getAccessibleMethod($display, 'getReadableMemory');
-                    $expectedData = $reflectedMethod->invokeArgs($display, array($expectedData));
-                    $this->assertEquals($expectedData, $message['data']);
-                    break;
-                case 'error':
-                    $expectedMessage = sprintf(
-                        "Line %s: %s in %s",
-                        $testException->getLine(),
-                        $testException->getMessage(),
-                        $testException->getFile()
-                    );
-                    $this->assertEquals($expectedMessage, $message['message']);
-                    break;
-                case 'speed':
-                    $expectedMessage = 'Point in Time';
-                    $this->assertEquals($expectedMessage, $message['message']);
-                    $this->assertArrayHasKey('data', $message);
-                    $this->assertInternalType('string', $message['data']);
-                    $expectedData = microtime(true);
-                    $reflectedMethod = $this->getAccessibleMethod($display, 'getReadableTime');
-                    $expectedData = $reflectedMethod->invokeArgs($display, array($expectedData));
-                    $this->assertEquals($expectedData, $message['data']);
-                    break;
-            }
-        }
+        $this->assertEquals($expectedMessages, $consoleMessages);
     }
 
     public function testGetSpeedMeta()
@@ -218,10 +171,75 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    protected function getAccessibleMethod(Display $display, $methodName)
+    public function dataConsoleStore()
     {
-        $reflectedConsole = new ReflectionClass(get_class($display));
-        $reflectedMethod = $reflectedConsole->getMethod($methodName);
+        $display = new Display();
+        $reflectedTime = $this->getAccessibleMethod($display, 'getReadableTime');
+
+        return array(
+            array(
+                'store' => array(
+                    array(
+                        'data' => 'testing message',
+                        'type' => 'log'
+                    ),
+                    array(
+                        'name' => 'now',
+                        'data' => microtime(true),
+                        'type' => 'speed'
+                    ),
+                    array(
+                        'name' => 'little later',
+                        'data' => microtime(true) + 1,
+                        'type' => 'speed'
+                    ),
+                    array(
+                        'name' => 'invalid key',
+                        'type' => 'foo'
+                    )
+                ),
+                'meta' => array(
+                    'log'    => 1,
+                    'memory' => 0,
+                    'error'  => 1,
+                    'speed'  => 2
+                ),
+                'messages' => array(
+                    array(
+                        'message' => 'testing message',
+                        'type'    => 'log'
+                    ),
+                    array(
+                        'message' => 'now',
+                        'data'    => $reflectedTime->invokeArgs($display, array(microtime(true))),
+                        'type'    => 'speed'
+                    ),
+                    array(
+                        'message' => 'little later',
+                        'data'    => $reflectedTime->invokeArgs($display, array(microtime(true) + 1)),
+                        'type'    => 'speed'
+                    ),
+                    array(
+                        'message' => 'Unrecognized console log type: foo',
+                        'type'    => 'error'
+                    )
+                )
+            )
+        );
+    }
+
+    protected function setInternalProperty($class, $property, $value)
+    {
+        $reflectedClass = new ReflectionClass(get_class($class));
+        $reflectedProperty = $reflectedClass->getProperty($property);
+        $reflectedProperty->setAccessible(true);
+        $reflectedProperty->setValue($class, $value);
+    }
+
+    protected function getAccessibleMethod($class, $method)
+    {
+        $reflectedClass = new ReflectionClass(get_class($class));
+        $reflectedMethod = $reflectedClass->getMethod($method);
         $reflectedMethod->setAccessible(true);
         return $reflectedMethod;
     }
