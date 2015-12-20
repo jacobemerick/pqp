@@ -212,6 +212,21 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedList, $fileList);
     }
 
+    public function testFilterMessages()
+    {
+        $display = new Display();
+        $reflectedMethod = $this->getAccessibleMethod($display, 'filterMessages');
+
+        $filteredMessages = $reflectedMethod->invokeArgs($display, array(array(array(
+            'type' => 'remove'
+        )), 'keep'));
+        $this->assertEmpty($filteredMessages);
+        $filteredMessages = $reflectedMethod->invokeArgs($display, array(array(array(
+            'type' => 'keep'
+        )), 'keep'));
+        $this->assertCount(1, $filteredMessages);
+    }
+
     public function testGetReadableTime()
     {
         $timeTest = array(
