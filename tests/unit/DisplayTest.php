@@ -173,8 +173,10 @@ class DisplayTest extends PHPUnit_Framework_TestCase
 
     public function dataConsoleStore()
     {
+        $testException = new Exception('testing');
         $display = new Display();
         $reflectedTime = $this->getAccessibleMethod($display, 'getReadableTime');
+        $reflectedMemory = $this->getAccessibleMethod($display, 'getReadableMemory');
 
         return array(
             array(
@@ -221,6 +223,66 @@ class DisplayTest extends PHPUnit_Framework_TestCase
                     ),
                     array(
                         'message' => 'Unrecognized console log type: foo',
+                        'type'    => 'error'
+                    )
+                )
+            ),
+            array(
+                'store' => array(
+                    array(
+                        'data' => 'another testing message',
+                        'type' => 'log'
+                    ),
+                    array(
+                        'name'      => 'test array',
+                        'data'      => strlen(serialize(array('key' => 'value'))),
+                        'data_type' => 'array',
+                        'type'      => 'memory'
+                    ),
+                    array(
+                        'name'      => 'memory usage test',
+                        'data'      => memory_get_usage(),
+                        'data_type' => '',
+                        'type'      => 'memory'
+                    ),
+                    array(
+                        'data' => $testException->getMessage(),
+                        'file' => $testException->getFile(),
+                        'line' => $testException->getLine(),
+                        'type' => 'error'
+                    )
+                ),
+                'meta' => array(
+                    'log'    => 1,
+                    'memory' => 2,
+                    'error'  => 1,
+                    'speed'  => 0
+                ),
+                'messages' => array(
+                    array(
+                        'message' => 'another testing message',
+                        'type'    => 'log'
+                    ),
+                    array(
+                        'message' => 'array: test array',
+                        'data'    => $reflectedMemory->invokeArgs(
+                            $display,
+                            array(strlen(serialize(array('key' => 'value'))))
+                        ),
+                        'type'    => 'memory'
+                    ),
+                    array(
+                        'message' => 'memory usage test',
+                        'data'    => $reflectedMemory->invokeArgs($display, array(memory_get_usage())),
+                        'type'    => 'memory'
+                    ),
+                    array(
+                        'message' => sprintf(
+                            'Line %s: %s in %s',
+                            $testException->getLine(),
+                            $testException->getMessage(),
+                            $testException->getFile()
+                        ),
                         'type'    => 'error'
                     )
                 )

@@ -15,8 +15,9 @@ engines:
   phpmd:
     enabled: true
     exclude_fingerprints:
-    - 110a6bbdc7e94eb4a86542674654e023
-    - 68e7b9449b2a6da0aa1c847020ce1f7b
+    - 110a6bbdc7e94eb4a86542674654e023 # too many methods in PhpQuickProfilerTest
+    - 68e7b9449b2a6da0aa1c847020ce1f7b # too many methods in DisplayTest
+    - dddb09b04e0fa342fa5cd178d1f278de # unused parameter in dataProvider test
 ratings:
   paths:
   - src/**
