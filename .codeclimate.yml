@@ -18,6 +18,7 @@ engines:
     - 110a6bbdc7e94eb4a86542674654e023 # too many methods in PhpQuickProfilerTest
     - 68e7b9449b2a6da0aa1c847020ce1f7b # too many methods in DisplayTest
     - dddb09b04e0fa342fa5cd178d1f278de # unused parameter in dataProvider test
+    - a1f11ef6347fb5e0cf44929464affe78 # too long dataProvider in DisplayTest
 ratings:
   paths:
   - src/**

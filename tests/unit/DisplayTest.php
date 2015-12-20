@@ -139,6 +139,79 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedMeta, $speedMeta);
     }
 
+    /**
+     * @dataProvider dataQueryData
+     */
+    public function testGetQueryMeta($queryData, $expectedMeta, $expectedList)
+    {
+        $display = new Display();
+        $display->setQueryData($queryData);
+        $reflectedMethod = $this->getAccessibleMethod($display, 'getQueryMeta');
+
+        $queryMeta = $reflectedMethod->invoke($display);
+        $this->assertEquals($expectedMeta, $queryMeta);
+    }
+
+    /**
+     * @dataProvider dataQueryData
+     */
+    public function testGetQueryList($queryData, $expectedMeta, $expectedList)
+    {
+        $display = new Display();
+        $display->setQueryData($queryData);
+        $reflectedMethod = $this->getAccessibleMethod($display, 'getQueryList');
+
+        $queryList = $reflectedMethod->invoke($display);
+        $this->assertEquals($expectedList, $queryList);
+    }
+
+    public function testGetMemoryMeta()
+    {
+        $usedMemory = 123456;
+        $allowedMemory = '128M';
+        $display = new Display();
+        $display->setMemoryData(array(
+            'used'    => $usedMemory,
+            'allowed' => $allowedMemory
+        ));
+        $reflectedMethod = $this->getAccessibleMethod($display, 'getReadableMemory');
+        $usedMemory = $reflectedMethod->invokeArgs($display, array($usedMemory));
+        $expectedMeta = array(
+            'used'    => $usedMemory,
+            'allowed' => $allowedMemory
+        );
+
+        $reflectedMethod = $this->getAccessibleMethod($display, 'getMemoryMeta');
+        $memoryMeta = $reflectedMethod->invoke($display);
+        $this->assertEquals($expectedMeta, $memoryMeta);
+    }
+
+    /**
+     * @dataProvider dataFileData
+     */
+    public function testGetFileMeta($fileData, $expectedMeta, $expectedList)
+    {
+        $display = new Display();
+        $display->setFileData($fileData);
+        $reflectedMethod = $this->getAccessibleMethod($display, 'getFileMeta');
+
+        $fileMeta = $reflectedMethod->invoke($display);
+        $this->assertEquals($expectedMeta, $fileMeta);
+    }
+
+    /**
+     * @dataProvider dataFileData
+     */
+    public function testGetFileList($fileData, $expectedMeta, $expectedList)
+    {
+        $display = new Display();
+        $display->setFileData($fileData);
+        $reflectedMethod = $this->getAccessibleMethod($display, 'getFileList');
+
+        $fileList = $reflectedMethod->invoke($display);
+        $this->assertEquals($expectedList, $fileList);
+    }
+
     public function testGetReadableTime()
     {
         $timeTest = array(
@@ -284,6 +357,82 @@ class DisplayTest extends PHPUnit_Framework_TestCase
                             $testException->getFile()
                         ),
                         'type'    => 'error'
+                    )
+                )
+            )
+        );
+    }
+
+    public function dataQueryData()
+    {
+        $display = new Display();
+        $reflectedTime = $this->getAccessibleMethod($display, 'getReadableTime');
+
+        return array(
+            array(
+                'data' => array(
+                    array(
+                        'sql'     => "SELECT * FROM testing",
+                        'explain' => array('empty_key' => ''),
+                        'time'    => 25
+                    ),
+                    array(
+                        'sql'     => "SELECT id FROM testing WHERE title = :title",
+                        'explain' => array('key' => 'value'),
+                        'time'    => 5
+                    )
+                ),
+                'meta' => array(
+                    'count'   => 2,
+                    'time'    => $reflectedTime->invokeArgs($display, array(30)),
+                    'slowest' => $reflectedTime->invokeArgs($display, array(25)),
+                ),
+                'list' => array(
+                    array(
+                        'message'  => 'SELECT * FROM testing',
+                        'sub_data' => array(),
+                        'data'     => $reflectedTime->invokeArgs($display, array(25))
+                    ),
+                    array(
+                        'message'  => 'SELECT id FROM testing WHERE title = :title',
+                        'sub_data' => array('key' => 'value'),
+                        'data'     => $reflectedTime->invokeArgs($display, array(5))
+                    )
+                )
+            )
+        );
+    }
+
+    public function dataFileData()
+    {
+        $display = new Display();
+        $reflectedMemory = $this->getAccessibleMethod($display, 'getReadableMemory');
+
+        return array(
+            array(
+                'data' => array(
+                    array(
+                        'name' => 'test-file',
+                        'size' => 1234
+                    ),
+                    array(
+                        'name' => 'test-file-2',
+                        'size' => 66
+                    )
+                ),
+                'meta' => array(
+                    'count'   => 2,
+                    'size'    => $reflectedMemory->invokeArgs($display, array(1300)),
+                    'largest' => $reflectedMemory->invokeArgs($display, array(1234)),
+                ),
+                'list' => array(
+                    array(
+                        'message' => 'test-file',
+                        'data'    => $reflectedMemory->invokeArgs($display, array(1234))
+                    ),
+                    array(
+                        'message' => 'test-file-2',
+                        'data'    => $reflectedMemory->invokeArgs($display, array(66))
                     )
                 )
             )
