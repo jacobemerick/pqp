@@ -329,8 +329,11 @@ class Display
             return $message['type'] == $type;
         });
     }
- 
-    public function __invoke()
+
+    /**
+     * @returns array
+     */
+    protected function gatherTemplateData()
     {
         $consoleMeta = $this->getConsoleMeta();
         $speedMeta = $this->getSpeedMeta();
@@ -338,47 +341,52 @@ class Display
         $memoryMeta = $this->getMemoryMeta();
         $fileMeta = $this->getFileMeta();
 
-        $header = array(
-            'console' => array_sum($consoleMeta),
-            'speed'   => $speedMeta['elapsed'],
-            'query'   => $queryMeta['count'],
-            'memory'  => $memoryMeta['used'],
-            'files'   => $fileMeta['count']
-        );
-
         $consoleMessages = $this->getConsoleMessages();
         $queryList = $this->getQueryList();
         $fileList = $this->getFileList();
 
-        $console = array(
-            'meta' => $consoleMeta,
-            'messages' => $consoleMessages
+        return array(
+            'header' => array(
+                'console' => array_sum($consoleMeta),
+                'speed'   => $speedMeta['elapsed'],
+                'query'   => $queryMeta['count'],
+                'memory'  => $memoryMeta['used'],
+                'files'   => $fileMeta['count']
+            ),
+            'console' => array(
+                'meta' => $consoleMeta,
+                'messages' => $consoleMessages
+            ),
+            'speed' => array(
+                'meta' => $speedMeta,
+                'messages' => $this->filterMessages($consoleMessages, 'speed')
+            ),
+            'query' => array(
+                'meta' => $queryMeta,
+                'messages' => $queryList
+            ),
+            'memory' => array(
+                'meta' => $memoryMeta,
+                'messages' => $this->filterMessages($consoleMessages, 'memory')
+            ),
+            'files' => array(
+                'meta' => $fileMeta,
+                'messages' => $fileList
+            )
         );
+    }
 
-        $speed = array(
-            'meta' => $speedMeta,
-            'messages' => $this->filterMessages($consoleMessages, 'speed')
-        );
-
-        $query = array(
-            'meta' => $queryMeta,
-            'messages' => $queryList
-        );
-
-        $memory = array(
-            'meta' => $memoryMeta,
-            'messages' => $this->filterMessages($consoleMessages, 'memory')
-        );
-
-        $files = array(
-            'meta' => $fileMeta,
-            'messages' => $fileList
-        );
+    public function __invoke()
+    {
+        $templateData = $this->gatherTemplateData();
 
         // todo is this really the best way to load these?
         $styles = file_get_contents(__DIR__ . "/../{$this->options['style_path']}");
         $script = file_get_contents(__DIR__ . "/../{$this->options['script_path']}");
 
-        require_once __DIR__ .'/../asset/display.html';
+        call_user_func(function () use ($templateData, $styles, $script) {
+            extract($templateData);
+            require_once __DIR__ . '/../asset/display.html';
+        });
     }
 }
