@@ -1,6 +1,6 @@
 {
   "name": "particletree/pqp",
-  "description": "",
+  "description": "Simple PHP profiler to track application behavior during development",
   "license": "MIT",
   "require": {
     "php": ">=5.3.0"
