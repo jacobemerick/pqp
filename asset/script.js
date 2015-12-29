@@ -56,12 +56,24 @@
     if (container.classList.contains('shrink')) {
       container.classList.remove('shrink');
       document.getElementById('toggle-height').style.display = 'block';
+      document.cookie = "pQp_display=; expires=" + (new Date(-5000).toUTCString());
     } else {
       container.classList.add('shrink');
       container.classList.remove('tall');
       document.getElementById('toggle-height').style.display = 'none';
+      document.cookie = "pQp_display=shrink; path=/";
     }
   });
+
+  var cookies = document.cookie.split(';');
+  for (var i = 0; i < cookies.length; i++) {
+    var cookie = cookies[i].trim();
+    cookie = cookie.split('=');
+    if (cookie[0] == 'pQp_display' && cookie[1] == 'shrink') {
+      document.getElementById('toggle-details').click();
+      break;
+    }
+  }
 
   document.getElementById('toggle-height').addEventListener('click', function (event) {
     if (container.classList.contains('tall')) {
