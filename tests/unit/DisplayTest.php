@@ -230,7 +230,7 @@ class DisplayTest extends PHPUnit_Framework_TestCase
     public function testGetReadableTime()
     {
         $timeTest = array(
-            '.032432' => '32.432 ms',
+            '.032432' => '32 ms',
             '24.3781' => '24.378 s',
             '145.123' => '2.419 m'
         );

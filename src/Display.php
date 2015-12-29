@@ -291,6 +291,7 @@ class Display
         $unit = 's';
         if ($time < 1) {
             $time *= 1000;
+            $percision = 0;
             $unit = 'ms';
         } elseif ($time > 60) {
             $time /= 60;
