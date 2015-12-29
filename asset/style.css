@@ -10,6 +10,7 @@
   position: fixed;
   text-align: center;
   width: 100%;
+  z-index: 9999;
 }
 .pQp * {
   border: 0;
@@ -17,6 +18,7 @@
   font-size: 100%;
   margin: 0;
   padding: 0;
+  width: auto;
 }
 .pQp dl,
 .pQp ul {
@@ -35,6 +37,7 @@
   border-bottom: none;
   border-radius: 15px 15px 0 0;
   font-family: 'Lucida Grande', Tahoma, Arial, sans-serif;
+  width: 100%;
 }
 
 /* header */
@@ -54,6 +57,7 @@
   border-width: 0 0 6px 1px;
   display: block;
   padding: 20px 0 15px;
+  text-decoration: none;
 }
 .pQp .shrink .header a,
 .pQp .shrink .header a.selected {
