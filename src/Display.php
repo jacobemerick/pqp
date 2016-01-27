@@ -16,8 +16,9 @@ class Display
 
     /** @var  array */
     protected $defaults = array(
+        'relative_path' => true,
         'script_path' => 'asset/script.js',
-        'style_path'  => 'asset/style.css'
+        'style_path' => 'asset/style.css'
     );
 
     /** @var  array */
@@ -41,6 +42,9 @@ class Display
     /** @var  array */
     protected $fileData;
 
+    /** @var  integer */
+    protected $pathTrimStart = 0;
+
     /**
      * @param array $options
      */
@@ -48,6 +52,10 @@ class Display
     {
         $options = array_intersect_key($options, $this->defaults);
         $this->options = array_replace($this->defaults, $options);
+
+        if ($this->options['relative_path']) {
+            $this->pathTrimStart = $this->getPathTrimStart();
+        }
     }
 
     /**
@@ -107,6 +115,21 @@ class Display
     }
 
     /**
+     * @return integer
+     */
+    protected function getPathTrimStart()
+    {
+        $cwd = getcwd();
+        for ($pos = 0; $pos <= strlen($cwd); $pos++) {
+            if (strncmp($cwd, __DIR__, $pos + 1) !== 0) {
+                break;
+            }
+        }
+
+        return $pos;
+    }
+
+    /**
      * @return array
      */
     protected function getConsoleMeta()
@@ -151,7 +174,7 @@ class Display
                     break;
                 case 'error':
                     $message = array(
-                        'message' => "Line {$log['line']}: {$log['data']} in {$log['file']}",
+                        'message' => "Line {$log['line']}: {$log['data']} in {$this->getFilePath($log['file'])}}",
                         'type'    => 'error'
                     );
                     break;
@@ -271,7 +294,7 @@ class Display
         $fileList = array();
         foreach ($this->fileData as $file) {
             array_push($fileList, array(
-                'message' => $file['name'],
+                'message' => $this->getFilePath($file['name']),
                 'data'    => $this->getReadableMemory($file['size'])
             ));
         }
@@ -317,6 +340,19 @@ class Display
         $memory = round(pow(1024, $base - floor($base)), $percision);
         $unit = $unitOptions[floor($base)];
         return "{$memory} {$unit}";
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    protected function getFilePath($path)
+    {
+        if (!$this->options['relative_path']) {
+            return $path;
+        }
+
+        return substr($path, $this->pathTrimStart);
     }
 
     /**
