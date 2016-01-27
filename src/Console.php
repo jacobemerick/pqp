@@ -38,14 +38,17 @@ class Console
      *
      * @param mixed $object
      * @param string $name
+     * @param boolean $literal
      */
-    public function logMemory($object = null, $name = 'PHP')
+    public function logMemory($object = null, $name = 'PHP', $literal = false)
     {
         $memory = memory_get_usage();
         $dataType = '';
-        if (!is_null($object)) {
+        if (!is_null($object) && !$literal) {
             $memory = strlen(serialize($object));
             $dataType = gettype($object);
+        } else if (is_numeric($object) && $literal) {
+            $memory = floatval($object);
         }
 
         array_push($this->store, array(
