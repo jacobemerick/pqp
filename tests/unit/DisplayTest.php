@@ -88,6 +88,34 @@ class DisplayTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider dataPathTrimStart
+     */
+    public function testGetPathTrimStart($cwd, $dir, $expectedPosition)
+    {
+        $display = new Display();
+        $reflectedMethod = $this->getAccessibleMethod($display, 'getPathTrimStart');
+        $position = $reflectedMethod->invokeArgs($display, array($cwd, $dir));
+
+        $this->assertEquals($expectedPosition, $position);
+    }
+
+    public function dataPathTrimStart()
+    {
+        return array(
+            array(
+                'cwd' => '/Users/fakeUser/project',
+                'dir' => '/Users/fakeUser/project/vendor/particletree/pqp/tests/unit',
+                'expectedPosition' => 23,
+            ),
+            array(
+                'cwd' => '/Users/fakeUser/project/public/path',
+                'dir' => '/Users/fakeUser/project/vendor/particletree/pqp/tests/unit',
+                'expectedPosition' => 24,
+            ),
+        );
+    }
+
+    /**
      * @dataProvider dataConsoleStore
      */
     public function testGetConsoleMeta($consoleStore, $expectedMeta, $expectedMessages)

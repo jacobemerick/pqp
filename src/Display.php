@@ -54,7 +54,7 @@ class Display
         $this->options = array_replace($this->defaults, $options);
 
         if ($this->options['relative_path']) {
-            $this->pathTrimStart = $this->getPathTrimStart();
+            $this->pathTrimStart = $this->getPathTrimStart(getcwd(), __DIR__);
         }
     }
 
@@ -117,11 +117,10 @@ class Display
     /**
      * @return integer
      */
-    protected function getPathTrimStart()
+    protected function getPathTrimStart($cwd, $dir)
     {
-        $cwd = getcwd();
         for ($pos = 0; $pos <= strlen($cwd); $pos++) {
-            if (strncmp($cwd, __DIR__, $pos + 1) !== 0) {
+            if (strncmp($cwd, $dir, $pos + 1) !== 0) {
                 break;
             }
         }
