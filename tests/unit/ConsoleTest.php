@@ -88,6 +88,17 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($name, $log['name']);
         $this->assertEquals('speed', $log['type']);
+
+        $name = 'Literal Time';
+        $time = 12345.1231;
+
+        $console = new Console();
+        $console->logSpeed($name, $time);
+        $store = $this->getProtectedStore($console);
+        $log = array_pop($store);
+
+        $this->assertEquals($name, $log['name']);
+        $this->assertEquals($time, $log['data']);
     }
 
     public function testGetLogs()
