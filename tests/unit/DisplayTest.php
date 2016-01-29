@@ -19,15 +19,18 @@ class DisplayTest extends PHPUnit_Framework_TestCase
 
         $display = new Display();
         $this->assertAttributeEquals($defaults, 'options', $display);
+        $this->assertAttributeGreaterThan(0, 'pathTrimStart', $display);
 
         $options = array(
             'script_path' => 'testing/testing.js',
-            'fake_key' => 'foo bar'
+            'fake_key' => 'foo bar',
+            'relative_path' => false,
         );
         $expectedOptions = array_intersect_key($options, $defaults);
         $expectedOptions = array_replace($defaults, $expectedOptions);
         $display = new Display($options);
         $this->assertAttributeEquals($expectedOptions, 'options', $display);
+        $this->assertAttributeEquals(0, 'pathTrimStart', $display);
     }
 
     public function testSetStartTime()
@@ -97,22 +100,6 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         $position = $reflectedMethod->invokeArgs($display, array($cwd, $dir));
 
         $this->assertEquals($expectedPosition, $position);
-    }
-
-    public function dataPathTrimStart()
-    {
-        return array(
-            array(
-                'cwd' => '/Users/fakeUser/project',
-                'dir' => '/Users/fakeUser/project/vendor/particletree/pqp/tests/unit',
-                'expectedPosition' => 23,
-            ),
-            array(
-                'cwd' => '/Users/fakeUser/project/public/path',
-                'dir' => '/Users/fakeUser/project/vendor/particletree/pqp/tests/unit',
-                'expectedPosition' => 24,
-            ),
-        );
     }
 
     /**
@@ -287,6 +274,25 @@ class DisplayTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testGetFilePath()
+    {
+        $display = new Display(array('relative_path' => false));
+        $path = getcwd() . '/puppies';
+        $reflectedFilePath = $this->getAccessibleMethod($display, 'getFilePath');
+        $path = $reflectedFilePath->invokeArgs($display, array($path));
+        $expectedPath = getcwd() . '/puppies';
+
+        $this->assertEquals($expectedPath, $path);
+
+        $display = new Display();
+        $path = getcwd() . '/puppies';
+        $reflectedFilePath = $this->getAccessibleMethod($display, 'getFilePath');
+        $path = $reflectedFilePath->invokeArgs($display, array($path));
+        $expectedPath = '/puppies';
+
+        $this->assertEquals($expectedPath, $path);
+    }
+
     public function dataConsoleStore()
     {
         $testException = new Exception('testing');
@@ -405,6 +411,22 @@ class DisplayTest extends PHPUnit_Framework_TestCase
                     )
                 )
             )
+        );
+    }
+
+    public function dataPathTrimStart()
+    {
+        return array(
+            array(
+                'cwd' => '/Users/fakeUser/project',
+                'dir' => '/Users/fakeUser/project/vendor/particletree/pqp/tests/unit',
+                'expectedPosition' => 23,
+            ),
+            array(
+                'cwd' => '/Users/fakeUser/project/public/path',
+                'dir' => '/Users/fakeUser/project/vendor/particletree/pqp/tests/unit',
+                'expectedPosition' => 24,
+            ),
         );
     }
 
