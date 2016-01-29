@@ -38,14 +38,17 @@ class Console
      *
      * @param mixed $object
      * @param string $name
+     * @param boolean $literal
      */
-    public function logMemory($object = null, $name = 'PHP')
+    public function logMemory($object = null, $name = 'PHP', $literal = false)
     {
         $memory = memory_get_usage();
         $dataType = '';
-        if (!is_null($object)) {
+        if (!is_null($object) && !$literal) {
             $memory = strlen(serialize($object));
             $dataType = gettype($object);
+        } else if (is_numeric($object) && $literal) {
+            $memory = floatval($object);
         }
 
         array_push($this->store, array(
@@ -80,11 +83,17 @@ class Console
      * Logs current time with optional message
      *
      * @param string $name
+     * @param float  $literalTime
      */
-    public function logSpeed($name = 'Point in Time')
+    public function logSpeed($name = 'Point in Time', $literalTime = null)
     {
+        $time = microtime(true);
+        if (!is_null($literalTime) && is_float($literalTime)) {
+            $time = $literalTime;
+        }
+
         array_push($this->store, array(
-            'data' => microtime(true),
+            'data' => $time,
             'name' => $name,
             'type' => 'speed'
         ));

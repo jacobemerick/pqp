@@ -41,6 +41,15 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($memory, $log['data']);
         $this->assertEquals('array', $log['data_type']);
         $this->assertEquals('memory', $log['type']);
+
+        $data = '12345';
+
+        $console = new Console();
+        $console->logMemory($data, 'PHP', true);
+        $store = $this->getProtectedStore($console);
+        $log = array_pop($store);
+
+        $this->assertEquals($data, $log['data']);
     }
 
     public function testLogError()
@@ -79,6 +88,17 @@ class ConsoleTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($name, $log['name']);
         $this->assertEquals('speed', $log['type']);
+
+        $name = 'Literal Time';
+        $time = 12345.1231;
+
+        $console = new Console();
+        $console->logSpeed($name, $time);
+        $store = $this->getProtectedStore($console);
+        $log = array_pop($store);
+
+        $this->assertEquals($name, $log['name']);
+        $this->assertEquals($time, $log['data']);
     }
 
     public function testGetLogs()
