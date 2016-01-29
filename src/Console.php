@@ -83,11 +83,17 @@ class Console
      * Logs current time with optional message
      *
      * @param string $name
+     * @param float  $literalTime
      */
-    public function logSpeed($name = 'Point in Time')
+    public function logSpeed($name = 'Point in Time', $literalTime = null)
     {
+        $time = microtime(true);
+        if (!is_null($literalTime) && is_float($literalTime)) {
+            $time = $literalTime;
+        }
+
         array_push($this->store, array(
-            'data' => microtime(true),
+            'data' => $time,
             'name' => $name,
             'type' => 'speed'
         ));
