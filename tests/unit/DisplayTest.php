@@ -291,6 +291,8 @@ class DisplayTest extends PHPUnit_Framework_TestCase
     {
         $testException = new Exception('testing');
         $display = new Display();
+        $reflectedPathTrim = $this->getAccessibleMethod($display, 'getPathTrimStart');
+        $trimStart = $reflectedPathTrim->invokeArgs($display, array(getcwd(), __DIR__));
         $reflectedTime = $this->getAccessibleMethod($display, 'getReadableTime');
         $reflectedMemory = $this->getAccessibleMethod($display, 'getReadableMemory');
 
@@ -397,7 +399,7 @@ class DisplayTest extends PHPUnit_Framework_TestCase
                             'Line %s: %s in %s',
                             $testException->getLine(),
                             $testException->getMessage(),
-                            $testException->getFile()
+                            substr($testException->getFile(), $trimStart)
                         ),
                         'type'    => 'error'
                     )
@@ -455,11 +457,11 @@ class DisplayTest extends PHPUnit_Framework_TestCase
             array(
                 'data' => array(
                     array(
-                        'name' => 'test-file',
+                        'name' => getcwd() . '/test-file',
                         'size' => 1234
                     ),
                     array(
-                        'name' => 'test-file-2',
+                        'name' => getcwd() . '/test-file-2',
                         'size' => 66
                     )
                 ),
@@ -470,11 +472,11 @@ class DisplayTest extends PHPUnit_Framework_TestCase
                 ),
                 'list' => array(
                     array(
-                        'message' => 'test-file',
+                        'message' => '/test-file',
                         'data'    => $reflectedMemory->invokeArgs($display, array(1234))
                     ),
                     array(
-                        'message' => 'test-file-2',
+                        'message' => '/test-file-2',
                         'data'    => $reflectedMemory->invokeArgs($display, array(66))
                     )
                 )

@@ -173,7 +173,7 @@ class Display
                     break;
                 case 'error':
                     $message = array(
-                        'message' => "Line {$log['line']}: {$log['data']} in {$this->getFilePath($log['file'])}}",
+                        'message' => "Line {$log['line']}: {$log['data']} in {$this->getFilePath($log['file'])}",
                         'type'    => 'error'
                     );
                     break;
